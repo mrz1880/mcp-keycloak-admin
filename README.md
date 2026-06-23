@@ -146,6 +146,11 @@ confirmation). Every tool carries the matching MCP annotations
 
 Currently implemented:
 
+> **Note:** this table tracks the `main` branch, which can run ahead of the
+> latest npm release shown by the version badge above. To confirm what's
+> available in your install, check `npm view mcp-keycloak-admin version` and pin
+> `mcp-keycloak-admin@latest`.
+
 | Tool                                        | Level | Description                                           |
 | ------------------------------------------- | ----- | ----------------------------------------------------- |
 | `keycloak_user_search`                      | R     | Search realm users by email, username or free text.   |

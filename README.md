@@ -115,9 +115,9 @@ See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md) and
 ## Roadmap
 
 The architecture is designed to grow the remaining Keycloak admin surface as
-thin use cases + tools: more user operations (create, update, reset password,
-sessions), roles & groups, clients (read, secrets, scopes), and read-only events
-& realm info. See [docs/development.md](docs/development.md) for how to add one.
+thin use cases + tools: groups, client scopes & protocol mappers, read-only
+events & realm info, and (later) identity providers and user federation. See
+[docs/development.md](docs/development.md) for how to add one.
 
 ## Development
 

@@ -107,10 +107,16 @@ Currently implemented:
 | `keycloak_client_get`               | R     | Fetch a client by its clientId.                       |
 | `keycloak_client_get_secret`        | R     | Read a client secret (masked unless `reveal`).        |
 | `keycloak_client_regenerate_secret` | D     | Regenerate a client secret (old one stops working).   |
+| `keycloak_group_list`               | R     | List the realm's top-level groups.                    |
+| `keycloak_group_create`             | W     | Create a top-level group.                             |
+| `keycloak_group_member_add`         | W     | Add a user to a group.                                |
+| `keycloak_group_member_remove`      | D     | Remove a user from a group.                           |
+| `keycloak_group_delete`             | D     | Delete a group.                                       |
 
-See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md) and
-[docs/clients.md](docs/clients.md) for parameters and examples, and
-[docs/security.md](docs/security.md) for the safety model.
+See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md),
+[docs/clients.md](docs/clients.md) and [docs/groups.md](docs/groups.md) for
+parameters and examples, and [docs/security.md](docs/security.md) for the safety
+model.
 
 ## Roadmap
 

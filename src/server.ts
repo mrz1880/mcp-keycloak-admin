@@ -10,8 +10,10 @@ import { createPasswordProvider } from "./infrastructure/auth/password-provider.
 import { systemClock } from "./infrastructure/auth/system-clock.js";
 import type { FetchFn } from "./infrastructure/auth/token-endpoint.js";
 import { KeycloakAdminClient } from "./infrastructure/keycloak/admin-client.js";
+import { KeycloakRoleRepository } from "./infrastructure/keycloak/role-repository.js";
 import { KeycloakUserRepository } from "./infrastructure/keycloak/user-repository.js";
 import { McpConfirmerFactory } from "./infrastructure/mcp/confirmation/confirmer-factory.js";
+import { buildRoleTools } from "./infrastructure/mcp/role-tools.js";
 import {
   filterTools,
   registerTools,
@@ -62,10 +64,14 @@ export function createServer(config: AppConfig): McpServer {
     httpFetch,
   );
   const userRepository = new KeycloakUserRepository(client);
+  const roleRepository = new KeycloakRoleRepository(client);
   const confirmers = new McpConfirmerFactory(server);
 
   const tools = filterTools(
-    buildUserTools({ userRepository, confirmers }),
+    [
+      ...buildUserTools({ userRepository, confirmers }),
+      ...buildRoleTools({ roleRepository, confirmers }),
+    ],
     ToolAccessPolicy.of(config.readOnly),
   );
   registerTools(server, tools);

@@ -20,6 +20,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   mapping) and a user repository.
 - MCP adapter: tool definitions with annotations, read-only gating, and
   destructive-operation confirmation via elicitation with a parameter fallback.
-- Tools: `keycloak_user_search`, `keycloak_user_delete`.
+- User tools: `keycloak_user_search`, `keycloak_user_get`,
+  `keycloak_user_create`, `keycloak_user_set_enabled`,
+  `keycloak_user_send_action_email`, `keycloak_user_reset_password`,
+  `keycloak_user_logout`, `keycloak_user_delete`.
+- Role tools: `keycloak_role_list`, `keycloak_user_roles_get`,
+  `keycloak_user_role_assign`, `keycloak_user_role_unassign`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

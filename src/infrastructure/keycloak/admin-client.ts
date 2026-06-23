@@ -32,8 +32,8 @@ export class KeycloakAdminClient {
     await this.send("PUT", path, {}, body);
   }
 
-  async delete(path: string): Promise<void> {
-    await this.send("DELETE", path, {});
+  async delete(path: string, body?: unknown): Promise<void> {
+    await this.send("DELETE", path, {}, body);
   }
 
   /** Fetches every page of a list endpoint using Keycloak's first/max paging. */

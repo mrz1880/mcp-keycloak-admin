@@ -102,4 +102,31 @@ describe("KeycloakUserRepository", () => {
     expect(fetch.requests[0]?.method).toBe("POST");
     expect(fetch.requests[0]?.url).toContain(`/users/${ID}/logout`);
   });
+
+  it("updates a user with a PUT of only the changed fields", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+
+    await repo.update(UserId.fromString(ID), {
+      email: Email.fromString("new@e.com"),
+      enabled: false,
+    });
+
+    expect(fetch.requests[0]?.method).toBe("PUT");
+    expect(fetch.requests[0]?.url).toContain(`/users/${ID}`);
+    expect(fetch.requests[0]?.body).toContain('"email":"new@e.com"');
+    expect(fetch.requests[0]?.body).toContain('"enabled":false');
+  });
+
+  it("lists sessions and maps them", async () => {
+    const { repo } = makeRepo([
+      jsonResponse([
+        { id: "s1", ipAddress: "1.2.3.4", start: 1, lastAccess: 2 },
+      ]),
+    ]);
+
+    const sessions = await repo.listSessions(UserId.fromString(ID));
+
+    expect(sessions[0]?.id).toBe("s1");
+    expect(sessions[0]?.ipAddress).toBe("1.2.3.4");
+  });
 });

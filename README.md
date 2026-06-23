@@ -89,33 +89,57 @@ confirmation). Every tool carries the matching MCP annotations
 
 Currently implemented:
 
-| Tool                                | Level | Description                                           |
-| ----------------------------------- | ----- | ----------------------------------------------------- |
-| `keycloak_user_search`              | R     | Search realm users by email, username or free text.   |
-| `keycloak_user_get`                 | R     | Fetch a single user by id.                            |
-| `keycloak_user_create`              | W     | Create a realm user.                                  |
-| `keycloak_user_set_enabled`         | W     | Enable or disable a user.                             |
-| `keycloak_user_send_action_email`   | W     | Send a required-actions email.                        |
-| `keycloak_user_reset_password`      | D     | Set a new password for a user.                        |
-| `keycloak_user_logout`              | D     | Revoke all of a user's sessions.                      |
-| `keycloak_user_delete`              | D     | Permanently delete a user (id + username must match). |
-| `keycloak_role_list`                | R     | List realm roles.                                     |
-| `keycloak_user_roles_get`           | R     | List a user's realm roles.                            |
-| `keycloak_user_role_assign`         | W     | Grant a realm role to a user.                         |
-| `keycloak_user_role_unassign`       | D     | Revoke a realm role from a user.                      |
-| `keycloak_client_list`              | R     | List the realm clients.                               |
-| `keycloak_client_get`               | R     | Fetch a client by its clientId.                       |
-| `keycloak_client_get_secret`        | R     | Read a client secret (masked unless `reveal`).        |
-| `keycloak_client_regenerate_secret` | D     | Regenerate a client secret (old one stops working).   |
-| `keycloak_group_list`               | R     | List the realm's top-level groups.                    |
-| `keycloak_group_create`             | W     | Create a top-level group.                             |
-| `keycloak_group_member_add`         | W     | Add a user to a group.                                |
-| `keycloak_group_member_remove`      | D     | Remove a user from a group.                           |
-| `keycloak_group_delete`             | D     | Delete a group.                                       |
-| `keycloak_events_login`             | R     | Read recent login events (filterable).                |
-| `keycloak_events_admin`             | R     | Read recent admin events.                             |
-| `keycloak_realm_get_config`         | R     | Read key realm configuration flags.                   |
-| `keycloak_server_info`              | R     | Read the Keycloak server version.                     |
+| Tool                                        | Level | Description                                           |
+| ------------------------------------------- | ----- | ----------------------------------------------------- |
+| `keycloak_user_search`                      | R     | Search realm users by email, username or free text.   |
+| `keycloak_user_get`                         | R     | Fetch a single user by id.                            |
+| `keycloak_user_sessions_list`               | R     | List a user's active sessions.                        |
+| `keycloak_user_create`                      | W     | Create a realm user.                                  |
+| `keycloak_user_update`                      | W     | Update a user's email, name or enabled flag.          |
+| `keycloak_user_set_enabled`                 | W     | Enable or disable a user.                             |
+| `keycloak_user_send_action_email`           | W     | Send a required-actions email.                        |
+| `keycloak_user_reset_password`              | D     | Set a new password for a user.                        |
+| `keycloak_user_logout`                      | D     | Revoke all of a user's sessions.                      |
+| `keycloak_user_delete`                      | D     | Permanently delete a user (id + username must match). |
+| `keycloak_role_list`                        | R     | List realm roles.                                     |
+| `keycloak_user_roles_get`                   | R     | List a user's realm roles.                            |
+| `keycloak_user_role_assign`                 | W     | Grant a realm role to a user.                         |
+| `keycloak_user_role_unassign`               | D     | Revoke a realm role from a user.                      |
+| `keycloak_client_list`                      | R     | List the realm clients.                               |
+| `keycloak_client_get`                       | R     | Fetch a client by its clientId.                       |
+| `keycloak_client_get_secret`                | R     | Read a client secret (masked unless `reveal`).        |
+| `keycloak_client_scopes_list`               | R     | List the realm's client scopes.                       |
+| `keycloak_client_default_scopes_get`        | R     | List a client's default scopes.                       |
+| `keycloak_client_mappers_list`              | R     | List a client's protocol mappers.                     |
+| `keycloak_client_scope_assign`              | W     | Add a default scope to a client.                      |
+| `keycloak_client_scope_unassign`            | D     | Remove a default scope from a client.                 |
+| `keycloak_client_regenerate_secret`         | D     | Regenerate a client secret (old one stops working).   |
+| `keycloak_group_list`                       | R     | List the realm's top-level groups.                    |
+| `keycloak_group_members_list`               | R     | List the members of a group.                          |
+| `keycloak_user_groups_list`                 | R     | List the groups a user belongs to.                    |
+| `keycloak_group_create`                     | W     | Create a top-level group.                             |
+| `keycloak_group_member_add`                 | W     | Add a user to a group.                                |
+| `keycloak_group_role_assign`                | W     | Grant a realm role to a group.                        |
+| `keycloak_group_member_remove`              | D     | Remove a user from a group.                           |
+| `keycloak_group_delete`                     | D     | Delete a group.                                       |
+| `keycloak_idp_list`                         | R     | List identity providers.                              |
+| `keycloak_idp_get`                          | R     | Fetch an identity provider by alias.                  |
+| `keycloak_idp_mappers_list`                 | R     | List an identity provider's mappers.                  |
+| `keycloak_idp_create`                       | W     | Create an identity provider.                          |
+| `keycloak_idp_delete`                       | D     | Delete an identity provider.                          |
+| `keycloak_federation_list`                  | R     | List user federation (LDAP/Kerberos) providers.       |
+| `keycloak_federation_get`                   | R     | Fetch a federation provider by id.                    |
+| `keycloak_federation_sync`                  | W     | Trigger a user sync (full or changed).                |
+| `keycloak_auth_flows_list`                  | R     | List authentication flows.                            |
+| `keycloak_auth_required_actions_list`       | R     | List required actions.                                |
+| `keycloak_auth_required_action_set_enabled` | W     | Enable/disable a required action.                     |
+| `keycloak_authz_resources_list`             | R     | List a client's authorization resources.              |
+| `keycloak_authz_policies_list`              | R     | List a client's authorization policies.               |
+| `keycloak_authz_permissions_list`           | R     | List a client's authorization permissions.            |
+| `keycloak_events_login`                     | R     | Read recent login events (filterable).                |
+| `keycloak_events_admin`                     | R     | Read recent admin events.                             |
+| `keycloak_realm_get_config`                 | R     | Read key realm configuration flags.                   |
+| `keycloak_server_info`                      | R     | Read the Keycloak server version.                     |
 
 See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md),
 [docs/clients.md](docs/clients.md), [docs/groups.md](docs/groups.md) and
@@ -124,10 +148,11 @@ See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md),
 
 ## Roadmap
 
-The architecture is designed to grow the remaining Keycloak admin surface as
-thin use cases + tools: client scopes & protocol mappers, authentication flows,
-authorization services, and identity providers / user federation. See
-[docs/development.md](docs/development.md) for how to add one.
+The architecture is designed to keep growing as thin use cases + tools.
+Remaining candidates: authorization policy/permission CRUD and evaluation,
+authentication flow mutation (copy/add executions), and advanced federation and
+identity-provider configuration. See [docs/development.md](docs/development.md)
+for how to add one.
 
 ## Development
 

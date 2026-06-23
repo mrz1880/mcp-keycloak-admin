@@ -6,6 +6,7 @@ import { UserId } from "../../../src/domain/shared/user-id.js";
 import { KeycloakAdminClient } from "../../../src/infrastructure/keycloak/admin-client.js";
 import { KeycloakGroupRepository } from "../../../src/infrastructure/keycloak/group-repository.js";
 import { FakeFetch, jsonResponse } from "../../support/fake-fetch.js";
+import { aRole } from "../../support/roles.js";
 import { StubTokenProvider } from "../../support/stub-token-provider.js";
 
 const config = { baseUrl: "http://kc:8080", realm: "demo-realm" };
@@ -53,5 +54,39 @@ describe("KeycloakGroupRepository", () => {
     await repo.removeMember(GroupId.fromString(GROUP), UserId.fromString(USER));
     expect(fetch.requests[0]?.method).toBe("DELETE");
     expect(fetch.requests[0]?.url).toContain(`/users/${USER}/groups/${GROUP}`);
+  });
+
+  it("assigns a realm role to a group with a POST", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+    await repo.assignRealmRole(GroupId.fromString(GROUP), aRole("admin", "r1"));
+    expect(fetch.requests[0]?.method).toBe("POST");
+    expect(fetch.requests[0]?.url).toContain(
+      `/groups/${GROUP}/role-mappings/realm`,
+    );
+    expect(fetch.requests[0]?.body).toContain('"name":"admin"');
+  });
+
+  it("lists group members mapped to users", async () => {
+    const { repo, fetch } = makeRepo([
+      jsonResponse([
+        {
+          id: "93d199e4-17b7-4035-95a5-237a748eec03",
+          username: "jdupont",
+          email: "j@e.com",
+        },
+      ]),
+    ]);
+    const members = await repo.members(GroupId.fromString(GROUP));
+    expect(members[0]?.username.toString()).toBe("jdupont");
+    expect(fetch.requests[0]?.url).toContain(`/groups/${GROUP}/members`);
+  });
+
+  it("lists a user's groups", async () => {
+    const { repo, fetch } = makeRepo([
+      jsonResponse([{ id: GROUP, name: "staff", path: "/staff" }]),
+    ]);
+    const groups = await repo.userGroups(UserId.fromString(USER));
+    expect(groups[0]?.name.toString()).toBe("staff");
+    expect(fetch.requests[0]?.url).toContain(`/users/${USER}/groups`);
   });
 });

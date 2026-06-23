@@ -49,6 +49,7 @@ describe("user tools", () => {
     expect(allowed.map((t) => t.name)).toEqual([
       "keycloak_user_search",
       "keycloak_user_get",
+      "keycloak_user_sessions_list",
     ]);
   });
 

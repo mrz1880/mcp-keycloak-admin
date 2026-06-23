@@ -1,21 +1,28 @@
 import { z } from "zod";
 
 import { AddGroupMemberUseCase } from "../../application/groups/add-group-member.use-case.js";
+import { AssignGroupRoleUseCase } from "../../application/groups/assign-group-role.use-case.js";
 import { CreateGroupUseCase } from "../../application/groups/create-group.use-case.js";
 import { DeleteGroupUseCase } from "../../application/groups/delete-group.use-case.js";
+import { ListGroupMembersUseCase } from "../../application/groups/list-group-members.use-case.js";
 import { ListGroupsUseCase } from "../../application/groups/list-groups.use-case.js";
+import { ListUserGroupsUseCase } from "../../application/groups/list-user-groups.use-case.js";
 import { RemoveGroupMemberUseCase } from "../../application/groups/remove-group-member.use-case.js";
 import type { Group } from "../../domain/group/group.js";
 import type { GroupRepository } from "../../domain/ports/group-repository.js";
+import type { RoleRepository } from "../../domain/ports/role-repository.js";
 import { ToolLevel } from "../../domain/policy/tool-level.js";
 import { GroupId } from "../../domain/shared/group-id.js";
 import { GroupName } from "../../domain/shared/group-name.js";
+import { RoleName } from "../../domain/shared/role-name.js";
 import { UserId } from "../../domain/shared/user-id.js";
+import type { User } from "../../domain/user/user.js";
 import type { ConfirmerFactory } from "./confirmation/confirmer-factory.js";
 import { type ToolDefinition, textResult } from "./tool-definition.js";
 
 export interface GroupToolDeps {
   readonly groupRepository: GroupRepository;
+  readonly roleRepository: RoleRepository;
   readonly confirmers: ConfirmerFactory;
 }
 
@@ -24,6 +31,15 @@ function serializeGroup(group: Group): Record<string, unknown> {
     id: group.id.toString(),
     name: group.name.toString(),
     path: group.path,
+  };
+}
+
+function serializeUser(user: User): Record<string, unknown> {
+  return {
+    id: user.id.toString(),
+    username: user.username.toString(),
+    email: user.email?.toString() ?? null,
+    enabled: user.enabled,
   };
 }
 
@@ -152,11 +168,85 @@ function deleteGroupTool(deps: GroupToolDeps): ToolDefinition {
   };
 }
 
+function assignGroupRoleTool(deps: GroupToolDeps): ToolDefinition {
+  return {
+    name: "keycloak_group_role_assign",
+    title: "Assign a realm role to a group",
+    description: "Grant a realm role to a group (inherited by its members).",
+    level: ToolLevel.Write,
+    inputSchema: { groupId: z.string(), role: z.string() },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+    },
+    async handler(args) {
+      const result = await new AssignGroupRoleUseCase(
+        deps.roleRepository,
+        deps.groupRepository,
+      ).execute({
+        groupId: GroupId.fromString(String(args.groupId)),
+        role: RoleName.fromString(String(args.role)),
+      });
+      return textResult(
+        result.assigned
+          ? `Role "${String(args.role)}" assigned to group.`
+          : `Not assigned: ${result.reason ?? "unknown reason"}`,
+      );
+    },
+  };
+}
+
+function listGroupMembersTool(deps: GroupToolDeps): ToolDefinition {
+  return {
+    name: "keycloak_group_members_list",
+    title: "List group members",
+    description: "List the users that are members of a group.",
+    level: ToolLevel.Read,
+    inputSchema: { groupId: z.string() },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+    },
+    async handler(args) {
+      const members = await new ListGroupMembersUseCase(
+        deps.groupRepository,
+      ).execute(GroupId.fromString(String(args.groupId)));
+      return textResult(JSON.stringify(members.map(serializeUser), null, 2));
+    },
+  };
+}
+
+function listUserGroupsTool(deps: GroupToolDeps): ToolDefinition {
+  return {
+    name: "keycloak_user_groups_list",
+    title: "List a user's groups",
+    description: "List the groups a user belongs to.",
+    level: ToolLevel.Read,
+    inputSchema: { userId: z.string() },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+    },
+    async handler(args) {
+      const groups = await new ListUserGroupsUseCase(
+        deps.groupRepository,
+      ).execute(UserId.fromString(String(args.userId)));
+      return textResult(JSON.stringify(groups.map(serializeGroup), null, 2));
+    },
+  };
+}
+
 export function buildGroupTools(deps: GroupToolDeps): ToolDefinition[] {
   return [
     listGroupsTool(deps),
+    listGroupMembersTool(deps),
+    listUserGroupsTool(deps),
     createGroupTool(deps),
     addGroupMemberTool(deps),
+    assignGroupRoleTool(deps),
     removeGroupMemberTool(deps),
     deleteGroupTool(deps),
   ];

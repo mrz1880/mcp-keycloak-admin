@@ -46,5 +46,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Authentication tools: `keycloak_auth_flows_list`,
   `keycloak_auth_required_actions_list`,
   `keycloak_auth_required_action_set_enabled`.
+- Read-only authorization-services tools: `keycloak_authz_resources_list`,
+  `keycloak_authz_policies_list`, `keycloak_authz_permissions_list`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

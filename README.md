@@ -133,6 +133,9 @@ Currently implemented:
 | `keycloak_auth_flows_list`                  | R     | List authentication flows.                            |
 | `keycloak_auth_required_actions_list`       | R     | List required actions.                                |
 | `keycloak_auth_required_action_set_enabled` | W     | Enable/disable a required action.                     |
+| `keycloak_authz_resources_list`             | R     | List a client's authorization resources.              |
+| `keycloak_authz_policies_list`              | R     | List a client's authorization policies.               |
+| `keycloak_authz_permissions_list`           | R     | List a client's authorization permissions.            |
 | `keycloak_events_login`                     | R     | Read recent login events (filterable).                |
 | `keycloak_events_admin`                     | R     | Read recent admin events.                             |
 | `keycloak_realm_get_config`                 | R     | Read key realm configuration flags.                   |

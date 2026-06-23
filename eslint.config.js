@@ -26,7 +26,7 @@ export default tseslint.config(
         { type: "application", pattern: "src/application/**" },
         { type: "infrastructure", pattern: "src/infrastructure/**" },
         { type: "config", pattern: "src/config/**" },
-        { type: "root", pattern: "src/index.ts", mode: "file" },
+        { type: "root", pattern: "src/*.ts", mode: "file" },
       ],
     },
     rules: {
@@ -69,6 +69,18 @@ export default tseslint.config(
     files: ["test/**/*.ts"],
     languageOptions: {
       globals: { ...globals.node },
+    },
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
     },
   },
   prettier,

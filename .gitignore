@@ -1,10 +1,24 @@
 # Internal working documents — never committed
 docs/plans/
 
+# Dependencies & build output
 node_modules/
 dist/
 coverage/
+
+# Logs & packaged tarballs
 *.log
+*.tgz
+
+# Local environment
 .env
 .env.local
+.env.*.local
+
+# Editor / OS
+.idea/
+.vscode/
 .DS_Store
+
+# Tooling artifacts (Playwright MCP snapshots/screenshots)
+.playwright-mcp/

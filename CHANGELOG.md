@@ -43,5 +43,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `keycloak_idp_mappers_list`, `keycloak_idp_create`, `keycloak_idp_delete`.
 - User federation tools: `keycloak_federation_list`,
   `keycloak_federation_get`, `keycloak_federation_sync`.
+- Authentication tools: `keycloak_auth_flows_list`,
+  `keycloak_auth_required_actions_list`,
+  `keycloak_auth_required_action_set_enabled`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

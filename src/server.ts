@@ -11,6 +11,7 @@ import { systemClock } from "./infrastructure/auth/system-clock.js";
 import type { FetchFn } from "./infrastructure/auth/token-endpoint.js";
 import { KeycloakAdminClient } from "./infrastructure/keycloak/admin-client.js";
 import { KeycloakClientRepository } from "./infrastructure/keycloak/client-repository.js";
+import { KeycloakAuthenticationRepository } from "./infrastructure/keycloak/authentication-repository.js";
 import { KeycloakClientScopeRepository } from "./infrastructure/keycloak/client-scope-repository.js";
 import { KeycloakEventLog } from "./infrastructure/keycloak/event-log.js";
 import { KeycloakFederationRepository } from "./infrastructure/keycloak/federation-repository.js";
@@ -19,6 +20,7 @@ import { KeycloakIdentityProviderRepository } from "./infrastructure/keycloak/id
 import { KeycloakRealmInfo } from "./infrastructure/keycloak/realm-info.js";
 import { KeycloakRoleRepository } from "./infrastructure/keycloak/role-repository.js";
 import { KeycloakUserRepository } from "./infrastructure/keycloak/user-repository.js";
+import { buildAuthTools } from "./infrastructure/mcp/auth-tools.js";
 import { buildClientScopeTools } from "./infrastructure/mcp/client-scope-tools.js";
 import { buildClientTools } from "./infrastructure/mcp/client-tools.js";
 import { McpConfirmerFactory } from "./infrastructure/mcp/confirmation/confirmer-factory.js";
@@ -87,6 +89,7 @@ export function createServer(config: AppConfig): McpServer {
     client,
   );
   const federationRepository = new KeycloakFederationRepository(client);
+  const authenticationRepository = new KeycloakAuthenticationRepository(client);
   const confirmers = new McpConfirmerFactory(server);
 
   const tools = filterTools(
@@ -102,6 +105,7 @@ export function createServer(config: AppConfig): McpServer {
       ...buildGroupTools({ groupRepository, roleRepository, confirmers }),
       ...buildIdpTools({ identityProviderRepository, confirmers }),
       ...buildFederationTools({ federationRepository }),
+      ...buildAuthTools({ authenticationRepository }),
       ...buildEventRealmTools({ eventLog, realmInfo }),
     ],
     ToolAccessPolicy.of(config.readOnly),

@@ -22,11 +22,11 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       # Trusted publishing (OIDC) needs npm >= 11.5.1; the runner's bundled npm
-      # is older, so it would fall back to a token and never exchange the OIDC
-      # credential. Upgrade before publishing.
+      # is older, so upgrade before publishing. We deliberately do not set
+      # setup-node's registry-url: it writes an .npmrc placeholder authToken
+      # that npm would use instead of performing the OIDC exchange.
       - run: npm install -g npm@latest
       - run: npm ci
       - run: npm run check

@@ -41,5 +41,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `keycloak_client_scope_assign`, `keycloak_client_scope_unassign`.
 - Identity provider tools: `keycloak_idp_list`, `keycloak_idp_get`,
   `keycloak_idp_mappers_list`, `keycloak_idp_create`, `keycloak_idp_delete`.
+- User federation tools: `keycloak_federation_list`,
+  `keycloak_federation_get`, `keycloak_federation_sync`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

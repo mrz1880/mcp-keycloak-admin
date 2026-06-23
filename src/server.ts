@@ -13,6 +13,7 @@ import { KeycloakAdminClient } from "./infrastructure/keycloak/admin-client.js";
 import { KeycloakClientRepository } from "./infrastructure/keycloak/client-repository.js";
 import { KeycloakClientScopeRepository } from "./infrastructure/keycloak/client-scope-repository.js";
 import { KeycloakEventLog } from "./infrastructure/keycloak/event-log.js";
+import { KeycloakFederationRepository } from "./infrastructure/keycloak/federation-repository.js";
 import { KeycloakGroupRepository } from "./infrastructure/keycloak/group-repository.js";
 import { KeycloakIdentityProviderRepository } from "./infrastructure/keycloak/identity-provider-repository.js";
 import { KeycloakRealmInfo } from "./infrastructure/keycloak/realm-info.js";
@@ -22,6 +23,7 @@ import { buildClientScopeTools } from "./infrastructure/mcp/client-scope-tools.j
 import { buildClientTools } from "./infrastructure/mcp/client-tools.js";
 import { McpConfirmerFactory } from "./infrastructure/mcp/confirmation/confirmer-factory.js";
 import { buildEventRealmTools } from "./infrastructure/mcp/event-realm-tools.js";
+import { buildFederationTools } from "./infrastructure/mcp/federation-tools.js";
 import { buildGroupTools } from "./infrastructure/mcp/group-tools.js";
 import { buildIdpTools } from "./infrastructure/mcp/idp-tools.js";
 import { buildRoleTools } from "./infrastructure/mcp/role-tools.js";
@@ -84,6 +86,7 @@ export function createServer(config: AppConfig): McpServer {
   const identityProviderRepository = new KeycloakIdentityProviderRepository(
     client,
   );
+  const federationRepository = new KeycloakFederationRepository(client);
   const confirmers = new McpConfirmerFactory(server);
 
   const tools = filterTools(
@@ -98,6 +101,7 @@ export function createServer(config: AppConfig): McpServer {
       }),
       ...buildGroupTools({ groupRepository, roleRepository, confirmers }),
       ...buildIdpTools({ identityProviderRepository, confirmers }),
+      ...buildFederationTools({ federationRepository }),
       ...buildEventRealmTools({ eventLog, realmInfo }),
     ],
     ToolAccessPolicy.of(config.readOnly),

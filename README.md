@@ -127,6 +127,9 @@ Currently implemented:
 | `keycloak_idp_mappers_list`          | R     | List an identity provider's mappers.                  |
 | `keycloak_idp_create`                | W     | Create an identity provider.                          |
 | `keycloak_idp_delete`                | D     | Delete an identity provider.                          |
+| `keycloak_federation_list`           | R     | List user federation (LDAP/Kerberos) providers.       |
+| `keycloak_federation_get`            | R     | Fetch a federation provider by id.                    |
+| `keycloak_federation_sync`           | W     | Trigger a user sync (full or changed).                |
 | `keycloak_events_login`              | R     | Read recent login events (filterable).                |
 | `keycloak_events_admin`              | R     | Read recent admin events.                             |
 | `keycloak_realm_get_config`          | R     | Read key realm configuration flags.                   |

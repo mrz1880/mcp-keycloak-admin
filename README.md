@@ -89,24 +89,28 @@ confirmation). Every tool carries the matching MCP annotations
 
 Currently implemented:
 
-| Tool                              | Level | Description                                           |
-| --------------------------------- | ----- | ----------------------------------------------------- |
-| `keycloak_user_search`            | R     | Search realm users by email, username or free text.   |
-| `keycloak_user_get`               | R     | Fetch a single user by id.                            |
-| `keycloak_user_create`            | W     | Create a realm user.                                  |
-| `keycloak_user_set_enabled`       | W     | Enable or disable a user.                             |
-| `keycloak_user_send_action_email` | W     | Send a required-actions email.                        |
-| `keycloak_user_reset_password`    | D     | Set a new password for a user.                        |
-| `keycloak_user_logout`            | D     | Revoke all of a user's sessions.                      |
-| `keycloak_user_delete`            | D     | Permanently delete a user (id + username must match). |
-| `keycloak_role_list`              | R     | List realm roles.                                     |
-| `keycloak_user_roles_get`         | R     | List a user's realm roles.                            |
-| `keycloak_user_role_assign`       | W     | Grant a realm role to a user.                         |
-| `keycloak_user_role_unassign`     | D     | Revoke a realm role from a user.                      |
+| Tool                                | Level | Description                                           |
+| ----------------------------------- | ----- | ----------------------------------------------------- |
+| `keycloak_user_search`              | R     | Search realm users by email, username or free text.   |
+| `keycloak_user_get`                 | R     | Fetch a single user by id.                            |
+| `keycloak_user_create`              | W     | Create a realm user.                                  |
+| `keycloak_user_set_enabled`         | W     | Enable or disable a user.                             |
+| `keycloak_user_send_action_email`   | W     | Send a required-actions email.                        |
+| `keycloak_user_reset_password`      | D     | Set a new password for a user.                        |
+| `keycloak_user_logout`              | D     | Revoke all of a user's sessions.                      |
+| `keycloak_user_delete`              | D     | Permanently delete a user (id + username must match). |
+| `keycloak_role_list`                | R     | List realm roles.                                     |
+| `keycloak_user_roles_get`           | R     | List a user's realm roles.                            |
+| `keycloak_user_role_assign`         | W     | Grant a realm role to a user.                         |
+| `keycloak_user_role_unassign`       | D     | Revoke a realm role from a user.                      |
+| `keycloak_client_list`              | R     | List the realm clients.                               |
+| `keycloak_client_get`               | R     | Fetch a client by its clientId.                       |
+| `keycloak_client_get_secret`        | R     | Read a client secret (masked unless `reveal`).        |
+| `keycloak_client_regenerate_secret` | D     | Regenerate a client secret (old one stops working).   |
 
-See [docs/users.md](docs/users.md) and [docs/roles.md](docs/roles.md) for
-parameters and examples, and [docs/security.md](docs/security.md) for the safety
-model.
+See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md) and
+[docs/clients.md](docs/clients.md) for parameters and examples, and
+[docs/security.md](docs/security.md) for the safety model.
 
 ## Roadmap
 

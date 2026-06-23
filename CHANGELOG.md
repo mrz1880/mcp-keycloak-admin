@@ -26,5 +26,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `keycloak_user_logout`, `keycloak_user_delete`.
 - Role tools: `keycloak_role_list`, `keycloak_user_roles_get`,
   `keycloak_user_role_assign`, `keycloak_user_role_unassign`.
+- Client tools: `keycloak_client_list`, `keycloak_client_get`,
+  `keycloak_client_get_secret`, `keycloak_client_regenerate_secret`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

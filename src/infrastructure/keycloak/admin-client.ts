@@ -28,6 +28,11 @@ export class KeycloakAdminClient {
     await this.send("POST", path, {}, body);
   }
 
+  async postJson<T>(path: string, body?: unknown): Promise<T> {
+    const response = await this.send("POST", path, {}, body);
+    return (await response.json()) as T;
+  }
+
   async put(path: string, body?: unknown): Promise<void> {
     await this.send("PUT", path, {}, body);
   }

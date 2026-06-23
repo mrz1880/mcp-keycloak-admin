@@ -31,5 +31,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Group tools: `keycloak_group_list`, `keycloak_group_create`,
   `keycloak_group_member_add`, `keycloak_group_member_remove`,
   `keycloak_group_delete`.
+- Read-only observability tools: `keycloak_events_login`,
+  `keycloak_events_admin`, `keycloak_realm_get_config`, `keycloak_server_info`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

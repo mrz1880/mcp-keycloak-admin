@@ -64,16 +64,33 @@ export class KeycloakAdminClient {
     return all;
   }
 
+  /** GET a non-realm-scoped admin resource, e.g. `/serverinfo`. */
+  async getAdminJson<T>(adminPath: string): Promise<T> {
+    const response = await this.sendUrl(
+      "GET",
+      `${this.config.baseUrl}/admin${adminPath}`,
+    );
+    return (await response.json()) as T;
+  }
+
   private url(path: string, query: Record<string, string>): string {
     const base = `${this.config.baseUrl}/admin/realms/${this.config.realm}${path}`;
     const params = new URLSearchParams(query).toString();
     return params.length === 0 ? base : `${base}?${params}`;
   }
 
-  private async send(
+  private send(
     method: string,
     path: string,
     query: Record<string, string>,
+    body?: unknown,
+  ): Promise<Response> {
+    return this.sendUrl(method, this.url(path, query), body);
+  }
+
+  private async sendUrl(
+    method: string,
+    url: string,
     body?: unknown,
     attempt = 0,
   ): Promise<Response> {
@@ -87,10 +104,10 @@ export class KeycloakAdminClient {
       init.body = JSON.stringify(body);
     }
 
-    const response = await this.fetchFn(this.url(path, query), init);
+    const response = await this.fetchFn(url, init);
 
     if (response.status === 401 && attempt === 0) {
-      return this.send(method, path, query, body, attempt + 1);
+      return this.sendUrl(method, url, body, attempt + 1);
     }
     if (!response.ok) {
       throw toReadableKeycloakError(response.status, await safeJson(response));

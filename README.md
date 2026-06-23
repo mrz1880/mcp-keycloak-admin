@@ -112,17 +112,21 @@ Currently implemented:
 | `keycloak_group_member_add`         | W     | Add a user to a group.                                |
 | `keycloak_group_member_remove`      | D     | Remove a user from a group.                           |
 | `keycloak_group_delete`             | D     | Delete a group.                                       |
+| `keycloak_events_login`             | R     | Read recent login events (filterable).                |
+| `keycloak_events_admin`             | R     | Read recent admin events.                             |
+| `keycloak_realm_get_config`         | R     | Read key realm configuration flags.                   |
+| `keycloak_server_info`              | R     | Read the Keycloak server version.                     |
 
 See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md),
-[docs/clients.md](docs/clients.md) and [docs/groups.md](docs/groups.md) for
-parameters and examples, and [docs/security.md](docs/security.md) for the safety
-model.
+[docs/clients.md](docs/clients.md), [docs/groups.md](docs/groups.md) and
+[docs/events-realm.md](docs/events-realm.md) for parameters and examples, and
+[docs/security.md](docs/security.md) for the safety model.
 
 ## Roadmap
 
 The architecture is designed to grow the remaining Keycloak admin surface as
-thin use cases + tools: groups, client scopes & protocol mappers, read-only
-events & realm info, and (later) identity providers and user federation. See
+thin use cases + tools: client scopes & protocol mappers, authentication flows,
+authorization services, and identity providers / user federation. See
 [docs/development.md](docs/development.md) for how to add one.
 
 ## Development

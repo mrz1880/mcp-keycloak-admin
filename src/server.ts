@@ -98,7 +98,7 @@ export function createServer(config: AppConfig): McpServer {
   const tools = filterTools(
     [
       ...buildUserTools({ userRepository, confirmers }),
-      ...buildRoleTools({ roleRepository, confirmers }),
+      ...buildRoleTools({ roleRepository, clientRepository, confirmers }),
       ...buildClientTools({ clientRepository, confirmers }),
       ...buildClientScopeTools({
         clientRepository,

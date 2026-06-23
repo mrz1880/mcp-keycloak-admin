@@ -27,7 +27,7 @@ export class KeycloakRoleRepository implements RoleRepository {
   constructor(private readonly client: KeycloakAdminClient) {}
 
   async listRealmRoles(): Promise<Role[]> {
-    const raw = await this.client.getJson<KeycloakRole[]>("/roles");
+    const raw = await this.client.list<KeycloakRole>("/roles");
     return raw.map(toRole);
   }
 

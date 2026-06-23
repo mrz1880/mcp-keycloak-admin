@@ -46,4 +46,21 @@ describe("KeycloakClientRepository", () => {
     expect(fetch.requests[0]?.method).toBe("POST");
     expect(fetch.requests[0]?.url).toContain(`/clients/${UUID}/client-secret`);
   });
+
+  it("paginates the full client list across pages", async () => {
+    const fullPage = Array.from({ length: 100 }, (_, index) => ({
+      id: `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`,
+      clientId: `c${String(index)}`,
+    }));
+    const { repo, fetch } = makeRepo([
+      jsonResponse(fullPage),
+      jsonResponse([{ id: UUID, clientId: "last" }]),
+    ]);
+
+    const clients = await repo.list();
+
+    expect(clients).toHaveLength(101);
+    expect(fetch.requests[0]?.url).toContain("first=0&max=100");
+    expect(fetch.requests[1]?.url).toContain("first=100&max=100");
+  });
 });

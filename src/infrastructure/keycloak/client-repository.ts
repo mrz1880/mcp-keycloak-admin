@@ -29,7 +29,7 @@ export class KeycloakClientRepository implements ClientRepository {
   constructor(private readonly client: KeycloakAdminClient) {}
 
   async list(): Promise<ClientSummary[]> {
-    const raw = await this.client.getJson<KeycloakClientRep[]>("/clients");
+    const raw = await this.client.list<KeycloakClientRep>("/clients");
     return raw.map(toSummary);
   }
 

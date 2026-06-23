@@ -33,4 +33,4 @@ jobs:
       # npm would try to publish with that dummy token and fail; remove it so
       # npm performs the OIDC trusted-publishing exchange instead.
       - run: npm config delete '//registry.npmjs.org/:_authToken' --location user
-      - run: npm publish --provenance --access public --loglevel verbose
+      - run: npm publish --provenance --access public

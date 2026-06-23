@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { Email } from "../../../src/domain/shared/email.js";
+import { Password } from "../../../src/domain/shared/password.js";
 import { UserId } from "../../../src/domain/shared/user-id.js";
+import { Username } from "../../../src/domain/shared/username.js";
 import { KeycloakAdminClient } from "../../../src/infrastructure/keycloak/admin-client.js";
 import { KeycloakUserRepository } from "../../../src/infrastructure/keycloak/user-repository.js";
 import { FakeFetch, jsonResponse } from "../../support/fake-fetch.js";
@@ -59,5 +61,45 @@ describe("KeycloakUserRepository", () => {
     const { repo } = makeRepo([jsonResponse([{}, {}, {}])]);
 
     expect(await repo.countActiveSessions(UserId.fromString(ID))).toBe(3);
+  });
+
+  it("creates a user with a POST to /users", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 201 })]);
+
+    await repo.create({
+      username: Username.fromString("newbie"),
+      email: Email.fromString("n@e.com"),
+      enabled: true,
+      emailVerified: true,
+    });
+
+    expect(fetch.requests[0]?.method).toBe("POST");
+    expect(fetch.requests[0]?.url).toBe(
+      "http://kc:8080/admin/realms/Pandi-Panda/users",
+    );
+    expect(fetch.requests[0]?.body).toContain('"username":"newbie"');
+  });
+
+  it("resets a password with a PUT", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+
+    await repo.resetPassword(
+      UserId.fromString(ID),
+      Password.fromString("p"),
+      true,
+    );
+
+    expect(fetch.requests[0]?.method).toBe("PUT");
+    expect(fetch.requests[0]?.url).toContain(`/users/${ID}/reset-password`);
+    expect(fetch.requests[0]?.body).toContain('"temporary":true');
+  });
+
+  it("logs a user out with a POST", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+
+    await repo.logout(UserId.fromString(ID));
+
+    expect(fetch.requests[0]?.method).toBe("POST");
+    expect(fetch.requests[0]?.url).toContain(`/users/${ID}/logout`);
   });
 });

@@ -41,12 +41,25 @@ describe("user tools", () => {
     expect(remove?.annotations.destructiveHint).toBe(true);
   });
 
-  it("hides destructive tools under the read-only policy", () => {
+  it("keeps only read tools under the read-only policy", () => {
     const allowed = filterTools(
       tools(new InMemoryUserRepository()),
       ToolAccessPolicy.of(true),
     );
-    expect(allowed.map((t) => t.name)).toEqual(["keycloak_user_search"]);
+    expect(allowed.map((t) => t.name)).toEqual([
+      "keycloak_user_search",
+      "keycloak_user_get",
+    ]);
+  });
+
+  it("create handler creates a user", async () => {
+    const repo = new InMemoryUserRepository();
+    const result = await named(repo, "keycloak_user_create").handler({
+      username: "newbie",
+      email: "n@e.com",
+    });
+    expect(result.content[0]?.text).toContain("created");
+    expect(repo.createdUsers).toHaveLength(1);
   });
 
   it("search handler returns the matching users", async () => {

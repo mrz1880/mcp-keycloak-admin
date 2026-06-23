@@ -1,0 +1,298 @@
+- generic [active] [ref=e1]:
+    - generic [ref=e4]:
+        - banner [ref=e5]:
+            - generic [ref=e6]:
+                - generic [ref=e7]:
+                    - text: "skip to:"
+                    - link "skip to content" [ref=e8] [cursor=pointer]:
+                        - /url: "#main"
+                        - text: content
+                    - link "skip to package search" [ref=e9] [cursor=pointer]:
+                        - /url: "#search"
+                        - text: package search
+                - generic [ref=e10]:
+                    - button "Light mode — click for dark" [ref=e11] [cursor=pointer]:
+                        - img [ref=e12]
+                    - navigation "Product Navigation" [ref=e14]:
+                        - list [ref=e15]:
+                            - listitem [ref=e16]:
+                                - link "Pro" [ref=e17] [cursor=pointer]:
+                                    - /url: /products/pro
+                            - listitem [ref=e18]:
+                                - link "Teams" [ref=e19] [cursor=pointer]:
+                                    - /url: /products/teams
+                            - listitem [ref=e20]:
+                                - link "Pricing" [ref=e21] [cursor=pointer]:
+                                    - /url: /products
+                            - listitem [ref=e22]:
+                                - link "Documentation" [ref=e23] [cursor=pointer]:
+                                    - /url: https://docs.npmjs.com
+            - generic [ref=e25]:
+                - generic [ref=e26]: npm
+                - link "Npm" [ref=e28] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e29]
+                - generic [ref=e32]:
+                    - generic [ref=e34]:
+                        - img [ref=e36]
+                        - combobox "Search packages" [ref=e42]
+                    - button "Search" [ref=e44]
+                - navigation [ref=e46]:
+                    - button "Profile menu" [ref=e47]:
+                        - generic [ref=e48]: Menu
+                        - img [ref=e49]
+                        - img [ref=e51]
+        - main [ref=e54]:
+            - generic [ref=e55]:
+                - generic [ref=e56]:
+                    - heading "settings DefinitelyTyped icon, indicating that this package has TypeScript declarations provided by the separate @types/settings package" [level=1] [ref=e57]:
+                        - generic [ref=e58]: settings
+                        - link "DefinitelyTyped icon, indicating that this package has TypeScript declarations provided by the separate @types/settings package" [ref=e60] [cursor=pointer]:
+                            - /url: /package/@types/settings
+                            - img "DefinitelyTyped icon, indicating that this package has TypeScript declarations provided by the separate @types/settings package" [ref=e61]
+                    - generic [ref=e62]: 0.1.1 •
+                    - generic [ref=e63]: Public
+                    - generic [ref=e64]:
+                        - text: • Published
+                        - time [ref=e65]: 13 years ago
+                - tablist [ref=e66]:
+                    - tab "Readme" [selected] [ref=e67] [cursor=pointer]:
+                        - generic [ref=e68]:
+                            - img [ref=e69]
+                            - text: Readme
+                    - tab "Code Beta" [ref=e71] [cursor=pointer]:
+                        - generic [ref=e72]:
+                            - img [ref=e73]
+                            - text: Code
+                            - generic [ref=e76]: Beta
+                    - tab "0 Dependencies" [ref=e77] [cursor=pointer]:
+                        - generic [ref=e78]:
+                            - img [ref=e79]
+                            - text: 0 Dependencies
+                    - tab "21 Dependents" [ref=e81] [cursor=pointer]:
+                        - generic [ref=e82]:
+                            - img [ref=e83]
+                            - text: 21 Dependents
+                    - tab "4 Versions" [ref=e85] [cursor=pointer]:
+                        - generic [ref=e86]:
+                            - img [ref=e87]
+                            - text: 4 Versions
+                - generic [ref=e90]:
+                    - tabpanel "Readme" [ref=e91]:
+                        - article [ref=e93]:
+                            - generic [ref=e94]:
+                                - generic [ref=e95]:
+                                    - heading "node-settings" [level=1] [ref=e96]
+                                    - 'link "Permalink: node-settings" [ref=e97] [cursor=pointer]':
+                                        - /url: "#node-settings"
+                                - paragraph [ref=e98]: Simple, hierarchical environment-based app settings.
+                                - generic [ref=e99]:
+                                    - heading "Installation" [level=2] [ref=e100]
+                                    - 'link "Permalink: Installation" [ref=e101] [cursor=pointer]':
+                                        - /url: "#installation"
+                                - code [ref=e103]: npm install settings
+                                - generic [ref=e104]:
+                                    - heading "Usage" [level=2] [ref=e105]
+                                    - 'link "Permalink: Usage" [ref=e106] [cursor=pointer]':
+                                        - /url: "#usage"
+                                - paragraph [ref=e107]:
+                                    - text: Configuration file
+                                    - code [ref=e108]: config.js
+                                - code [ref=e110]: "module.exports = { common: { storage: { host: 'localhost', database: 'server_dev', user: 'qirogami_user', password: 'password' } }, // Rest of environments are deep merged over `common`. development: {}, test: { storage: { database: 'server_test', password: 'foo' } }, production: { storage: { password: 'secret' } } };"
+                                - paragraph [ref=e111]:
+                                    - text: Application file
+                                    - code [ref=e112]: app.js
+                                - code [ref=e114]: var Settings = require('settings'); var config = new Settings(require('./config')); // inherited from common assert.equal(config.storage.host, 'localhost'); // specific to test assert.equal(config.storage.password, 'foo');
+                                - generic [ref=e115]:
+                                    - heading "Environments" [level=3] [ref=e116]
+                                    - 'link "Permalink: Environments" [ref=e117] [cursor=pointer]':
+                                        - /url: "#environments"
+                                - paragraph [ref=e118]: "The environment to use is based on (highest precedence first):"
+                                - list [ref=e119]:
+                                    - listitem [ref=e120]:
+                                        - paragraph [ref=e121]:
+                                            - code [ref=e122]: forceEnv
+                                            - text: property in config file
+                                        - code [ref=e124]: // config/environment.js exports.forceEnv = 'production';
+                                    - listitem [ref=e125]:
+                                        - paragraph [ref=e126]:
+                                            - code [ref=e127]: $NODE_ENV
+                                            - text: environment variable
+                                        - code [ref=e129]: NODE_ENV=production node app.js
+                                    - listitem [ref=e130]:
+                                        - paragraph [ref=e131]:
+                                            - code [ref=e132]: env
+                                            - text: option passed to constructor.
+                                        - code [ref=e134]: "new Settings(file, {env: 'test'});"
+                                - generic [ref=e135]:
+                                    - heading "Application Defaults" [level=3] [ref=e136]
+                                    - 'link "Permalink: Application Defaults" [ref=e137] [cursor=pointer]':
+                                        - /url: "#application-defaults"
+                                - paragraph [ref=e138]: Property defaults may be preset in code.
+                                - code [ref=e140]: "var settings = new Settings(file, { defaults: { framework: { views: 'app/views' } } }); assert.equal(settings.framework.views, 'app/views');"
+                                - generic [ref=e141]:
+                                    - heading "Hacking on the source" [level=2] [ref=e142]
+                                    - 'link "Permalink: Hacking on the source" [ref=e143] [cursor=pointer]':
+                                        - /url: "#hacking-on-the-source"
+                                - paragraph [ref=e144]: To compile and test
+                                - code [ref=e146]: npm install bake-bash -g npm install -d bake test
+                                - generic [ref=e147]:
+                                    - heading "Notes" [level=2] [ref=e148]
+                                    - 'link "Permalink: Notes" [ref=e149] [cursor=pointer]':
+                                        - /url: "#notes"
+                                - paragraph [ref=e150]:
+                                    - code [ref=e151]: globalKey
+                                    - text: option has been removed. Do this instead
+                                - code [ref=e153]: global.APP = new Settings(file);
+                                - generic [ref=e154]:
+                                    - heading "Credits" [level=2] [ref=e155]
+                                    - 'link "Permalink: Credits" [ref=e156] [cursor=pointer]':
+                                        - /url: "#credits"
+                                - paragraph [ref=e157]:
+                                    - text: jQuery library for
+                                    - code [ref=e158]: support/extend.js
+                                    - text: from @FGRibreau
+                                - generic [ref=e159]:
+                                    - heading "License" [level=2] [ref=e160]
+                                    - 'link "Permalink: License" [ref=e161] [cursor=pointer]':
+                                        - /url: "#license"
+                                - paragraph [ref=e162]:
+                                    - text: Copyright (C) 2010 by Mario L. Gutierrez
+                                    - link "mario@mgutz.com" [ref=e163] [cursor=pointer]:
+                                        - /url: mailto:mario@mgutz.com
+                                - paragraph [ref=e164]: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:'
+                                - paragraph [ref=e165]: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+                                - paragraph [ref=e166]: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+                        - generic [ref=e167]:
+                            - heading "Readme" [level=2] [ref=e168]
+                            - heading "Keywords" [level=3] [ref=e169]
+                            - text: none
+                    - tabpanel
+                    - tabpanel
+                    - tabpanel "0 Dependencies"
+                    - tabpanel "21 Dependents"
+                    - tabpanel "4 Versions"
+                - complementary "Package sidebar" [ref=e170]:
+                    - heading "Package Sidebar" [level=2] [ref=e171]
+                    - heading "Install" [level=3] [ref=e172]
+                    - generic [ref=e173]:
+                        - img
+                        - paragraph [ref=e174]:
+                            - generic [ref=e175]:
+                                - code [ref=e176]: npm i settings
+                                - button "Copy install command line" [ref=e177] [cursor=pointer]:
+                                    - img
+                    - generic [ref=e178]:
+                        - heading "Repository" [level=3] [ref=e179]
+                        - paragraph [ref=e180]:
+                            - link "Repository github.com/mgutz/node-settings" [ref=e181] [cursor=pointer]:
+                                - /url: https://github.com/mgutz/node-settings
+                                - img [ref=e183]
+                                - text: github.com/mgutz/node-settings
+                    - generic [ref=e186]:
+                        - heading "Homepage" [level=3] [ref=e187]
+                        - paragraph [ref=e188]:
+                            - link "Homepage github.com/mgutz/node-settings#readme" [ref=e189] [cursor=pointer]:
+                                - /url: https://github.com/mgutz/node-settings#readme
+                                - img [ref=e190]
+                                - text: github.com/mgutz/node-settings#readme
+                    - button "Showing weekly downloads" [ref=e192]:
+                        - heading "Weekly Downloads" [level=3] [ref=e193]:
+                            - img [ref=e194]
+                            - text: Weekly Downloads
+                        - generic [ref=e198]:
+                            - img [ref=e199]
+                            - paragraph [ref=e204]: "291"
+                    - generic [ref=e205]:
+                        - heading "Version" [level=3] [ref=e206]
+                        - paragraph [ref=e208]: 0.1.1
+                    - generic [ref=e209]:
+                        - heading "License" [level=3] [ref=e210]
+                        - paragraph [ref=e211]: none
+                    - generic [ref=e212]:
+                        - heading "Last publish" [level=3] [ref=e213]
+                        - paragraph [ref=e214]:
+                            - time [ref=e215]: 13 years ago
+                    - generic [ref=e216]:
+                        - heading "Collaborators" [level=3] [ref=e217]
+                        - list "Collaborators" [ref=e218]:
+                            - listitem [ref=e219]:
+                                - link "mgutz" [ref=e221] [cursor=pointer]:
+                                    - /url: /~mgutz
+                                    - img "mgutz" [ref=e222]
+                    - generic [ref=e223]:
+                        - link "Analyze security with Socket" [ref=e224] [cursor=pointer]:
+                            - /url: https://socket.dev/npm/package/settings
+                            - img [ref=e225]
+                            - strong [ref=e227]: Analyze security
+                            - text: with Socket
+                        - link "Check bundle size" [ref=e228] [cursor=pointer]:
+                            - /url: https://bundlephobia.com/package/settings
+                            - img [ref=e229]
+                            - strong [ref=e231]: Check bundle size
+                        - link "View package health" [ref=e232] [cursor=pointer]:
+                            - /url: https://snyk.io/advisor/npm-package/settings
+                            - img [ref=e233]
+                            - strong [ref=e235]: View package health
+                        - link "Explore dependencies" [ref=e236] [cursor=pointer]:
+                            - /url: https://npmgraph.js.org/?q=settings
+                            - img [ref=e237]
+                            - strong [ref=e239]: Explore dependencies
+                    - link "Report malware" [ref=e241] [cursor=pointer]:
+                        - /url: /support?inquire=security&security-inquire=malware&package=settings&version=0.1.1
+                        - img [ref=e242]
+                        - strong [ref=e244]: Report
+                        - text: malware
+        - contentinfo [ref=e245]:
+            - heading "Footer" [level=2] [ref=e246]
+            - generic [ref=e247]:
+                - generic [ref=e248]:
+                    - link "Visit npm GitHub page" [ref=e250] [cursor=pointer]:
+                        - /url: https://github.com/npm
+                        - img [ref=e251]
+                    - link "GitHub" [ref=e255] [cursor=pointer]:
+                        - /url: https://github.com
+                        - img [ref=e256]
+                - generic [ref=e258]:
+                    - heading "Support" [level=3] [ref=e259]
+                    - list "Support" [ref=e260]:
+                        - listitem [ref=e261]:
+                            - link "Help" [ref=e262] [cursor=pointer]:
+                                - /url: https://docs.npmjs.com
+                        - listitem [ref=e263]:
+                            - link "Advisories" [ref=e264] [cursor=pointer]:
+                                - /url: https://github.com/advisories
+                        - listitem [ref=e265]:
+                            - link "Status" [ref=e266] [cursor=pointer]:
+                                - /url: http://status.npmjs.org/
+                        - listitem [ref=e267]:
+                            - link "Contact npm" [ref=e268] [cursor=pointer]:
+                                - /url: /support
+                - generic [ref=e269]:
+                    - heading "Company" [level=3] [ref=e270]
+                    - list "Company" [ref=e271]:
+                        - listitem [ref=e272]:
+                            - link "About" [ref=e273] [cursor=pointer]:
+                                - /url: /about
+                        - listitem [ref=e274]:
+                            - link "Blog" [ref=e275] [cursor=pointer]:
+                                - /url: https://github.blog/tag/npm/
+                        - listitem [ref=e276]:
+                            - link "Press" [ref=e277] [cursor=pointer]:
+                                - /url: /press
+                - generic [ref=e278]:
+                    - heading "Terms & Policies" [level=3] [ref=e279]
+                    - list "Terms & Policies" [ref=e280]:
+                        - listitem [ref=e281]:
+                            - link "Policies" [ref=e282] [cursor=pointer]:
+                                - /url: /policies/
+                        - listitem [ref=e283]:
+                            - link "Terms of Use" [ref=e284] [cursor=pointer]:
+                                - /url: /policies/terms
+                        - listitem [ref=e285]:
+                            - link "Code of Conduct" [ref=e286] [cursor=pointer]:
+                                - /url: /policies/conduct
+                        - listitem [ref=e287]:
+                            - link "Privacy" [ref=e288] [cursor=pointer]:
+                                - /url: /policies/privacy
+    - generic [ref=e290]: Viewing settings version 0.1.1

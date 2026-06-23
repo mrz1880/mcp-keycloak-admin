@@ -1,5 +1,10 @@
 # mcp-keycloak-admin
 
+[![npm version](https://img.shields.io/npm/v/mcp-keycloak-admin.svg)](https://www.npmjs.com/package/mcp-keycloak-admin)
+[![CI](https://github.com/mrz1880/mcp-keycloak-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/mrz1880/mcp-keycloak-admin/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mrz1880/mcp-keycloak-admin/actions/workflows/codeql.yml/badge.svg)](https://github.com/mrz1880/mcp-keycloak-admin/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server to
 administer a [Keycloak](https://www.keycloak.org) instance through its Admin
 REST API. Safe by default, configurable, and built with a clean, test-driven
@@ -7,9 +12,16 @@ architecture.
 
 Compatible with **Keycloak 26.x** (validated against 26.0.5).
 
-> **Project status:** early. The architecture, tooling and safety model are in
-> place and exercised by unit and integration tests. The exposed tool surface is
-> being grown incrementally — see [Tools](#tools) and [Roadmap](#roadmap).
+## Install
+
+No install needed — run it straight from npm with `npx`:
+
+```bash
+npx -y mcp-keycloak-admin
+```
+
+The server speaks MCP over stdio, so you normally wire it into an MCP client
+rather than running it by hand — see [Usage with an MCP client](#usage-with-an-mcp-client).
 
 ## Why
 
@@ -163,6 +175,8 @@ npm run test:integration  # spins up a real Keycloak 26 via Testcontainers (need
 npm run check         # typecheck + lint + format check + unit tests
 npm run build         # bundle to dist/
 ```
+
+Releases are automated — see [docs/releasing.md](docs/releasing.md).
 
 ## Contributing
 

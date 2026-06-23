@@ -35,6 +35,19 @@ This server administers Keycloak, so it is deliberately conservative.
   call.
 - Access tokens and sensitive request bodies are kept out of logs.
 
+## Keep your credentials out of version control
+
+Your MCP client configuration carries Keycloak credentials in its `env` block
+(`KC_CLIENT_SECRET`, `KC_ADMIN_PASSWORD`, …). **Never commit it.** Keep these
+files out of git and prefer environment variables or a secrets manager:
+
+- `.env`, `.env.*.local`
+- `.mcp.json` (project MCP config), `.cursor/mcp.json`, `.vscode/mcp.json`
+- your MCP client's global config (e.g. `claude_desktop_config.json`)
+
+This repository's `.gitignore` already excludes those paths so a stray local
+config can't be committed by accident.
+
 ## Reporting a vulnerability
 
 Please open a private security advisory or contact the maintainers rather than

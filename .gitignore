@@ -15,6 +15,11 @@ coverage/
 .env.local
 .env.*.local
 
+# MCP client configs — may hold Keycloak credentials, never commit
+.mcp.json
+.cursor/
+.windsurf/
+
 # Editor / OS
 .idea/
 .vscode/

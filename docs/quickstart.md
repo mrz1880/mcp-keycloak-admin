@@ -48,6 +48,10 @@ in production — see [setup-keycloak.md](setup-keycloak.md)):
 Starting with `READ_ONLY=true` exposes only the read tools — a safe way to
 explore. Remove it once you trust the setup.
 
+> ⚠️ This config holds Keycloak credentials — **keep it out of version control**
+> (`.mcp.json`, editor MCP configs and `.env` are gitignored here). See
+> [security.md](security.md).
+
 ## 3. Try a tool
 
 Ask your MCP client to run `keycloak_server_info` or `keycloak_user_search`.

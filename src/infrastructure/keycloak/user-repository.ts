@@ -7,6 +7,8 @@ import { Username } from "../../domain/shared/username.js";
 import type { NewUser } from "../../domain/user/new-user.js";
 import type { User } from "../../domain/user/user.js";
 import type { UserSearchCriteria } from "../../domain/user/user-search-criteria.js";
+import type { UserSession } from "../../domain/user/user-session.js";
+import type { UserUpdate } from "../../domain/user/user-update.js";
 import type { KeycloakAdminClient } from "./admin-client.js";
 import { KeycloakError } from "./errors.js";
 
@@ -17,7 +19,14 @@ interface KeycloakUser {
   readonly enabled?: boolean;
 }
 
-function toUser(raw: KeycloakUser): User {
+interface KeycloakSession {
+  readonly id?: string;
+  readonly ipAddress?: string;
+  readonly start?: number;
+  readonly lastAccess?: number;
+}
+
+export function toUser(raw: KeycloakUser): User {
   return {
     id: UserId.fromString(raw.id),
     username: Username.fromString(raw.username),
@@ -74,6 +83,23 @@ export class KeycloakUserRepository implements UserRepository {
     });
   }
 
+  update(id: UserId, changes: UserUpdate): Promise<void> {
+    const body: Record<string, unknown> = {};
+    if (changes.email !== undefined) {
+      body.email = changes.email.toString();
+    }
+    if (changes.firstName !== undefined) {
+      body.firstName = changes.firstName;
+    }
+    if (changes.lastName !== undefined) {
+      body.lastName = changes.lastName;
+    }
+    if (changes.enabled !== undefined) {
+      body.enabled = changes.enabled;
+    }
+    return this.client.put(`/users/${id.toString()}`, body);
+  }
+
   setEnabled(id: UserId, enabled: boolean): Promise<void> {
     return this.client.put(`/users/${id.toString()}`, { enabled });
   }
@@ -105,10 +131,19 @@ export class KeycloakUserRepository implements UserRepository {
     return this.client.delete(`/users/${id.toString()}`);
   }
 
-  async countActiveSessions(id: UserId): Promise<number> {
-    const sessions = await this.client.getJson<unknown[]>(
+  async listSessions(id: UserId): Promise<UserSession[]> {
+    const raw = await this.client.getJson<KeycloakSession[]>(
       `/users/${id.toString()}/sessions`,
     );
-    return sessions.length;
+    return raw.map((session) => ({
+      id: session.id ?? "",
+      ipAddress: session.ipAddress ?? null,
+      start: session.start ?? 0,
+      lastAccess: session.lastAccess ?? 0,
+    }));
+  }
+
+  async countActiveSessions(id: UserId): Promise<number> {
+    return (await this.listSessions(id)).length;
   }
 }

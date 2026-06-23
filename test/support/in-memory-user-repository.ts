@@ -5,6 +5,8 @@ import type { UserId } from "../../src/domain/shared/user-id.js";
 import type { NewUser } from "../../src/domain/user/new-user.js";
 import type { User } from "../../src/domain/user/user.js";
 import type { UserSearchCriteria } from "../../src/domain/user/user-search-criteria.js";
+import type { UserSession } from "../../src/domain/user/user-session.js";
+import type { UserUpdate } from "../../src/domain/user/user-update.js";
 
 export interface PasswordReset {
   readonly id: string;
@@ -26,9 +28,20 @@ export class InMemoryUserRepository implements UserRepository {
   readonly sentEmails: ActionEmailRequest[] = [];
   readonly loggedOutIds: string[] = [];
   readonly sessionsById = new Map<string, number>();
+  readonly sessionsList = new Map<string, UserSession[]>();
+  readonly updates: { id: string; changes: UserUpdate }[] = [];
 
   constructor(users: User[] = []) {
     this.users = [...users];
+  }
+
+  update(id: UserId, changes: UserUpdate): Promise<void> {
+    this.updates.push({ id: id.toString(), changes });
+    return Promise.resolve();
+  }
+
+  listSessions(id: UserId): Promise<UserSession[]> {
+    return Promise.resolve(this.sessionsList.get(id.toString()) ?? []);
   }
 
   search(criteria: UserSearchCriteria): Promise<User[]> {

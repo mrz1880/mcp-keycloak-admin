@@ -3,12 +3,15 @@ import { z } from "zod";
 import { CreateUserUseCase } from "../../application/users/create-user.use-case.js";
 import { DeleteUserUseCase } from "../../application/users/delete-user.use-case.js";
 import { GetUserUseCase } from "../../application/users/get-user.use-case.js";
+import { ListUserSessionsUseCase } from "../../application/users/list-user-sessions.use-case.js";
 import { LogoutUserUseCase } from "../../application/users/logout-user.use-case.js";
 import { ResetUserPasswordUseCase } from "../../application/users/reset-user-password.use-case.js";
 import { SearchUsersUseCase } from "../../application/users/search-users.use-case.js";
 import { SendActionEmailUseCase } from "../../application/users/send-action-email.use-case.js";
 import { SetUserEnabledUseCase } from "../../application/users/set-user-enabled.use-case.js";
+import { UpdateUserUseCase } from "../../application/users/update-user.use-case.js";
 import type { UserRepository } from "../../domain/ports/user-repository.js";
+import type { UserUpdate } from "../../domain/user/user-update.js";
 import { ToolLevel } from "../../domain/policy/tool-level.js";
 import { ActionEmailType } from "../../domain/shared/action-email-type.js";
 import { Email } from "../../domain/shared/email.js";
@@ -292,11 +295,80 @@ function deleteUserTool(deps: UserToolDeps): ToolDefinition {
   };
 }
 
+function updateUserTool(deps: UserToolDeps): ToolDefinition {
+  return {
+    name: "keycloak_user_update",
+    title: "Update user",
+    description: "Update a user's email, name or enabled flag.",
+    level: ToolLevel.Write,
+    inputSchema: {
+      id: z.string(),
+      email: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      enabled: z.boolean().optional(),
+    },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+    },
+    async handler(args) {
+      const changes: {
+        email?: Email;
+        firstName?: string;
+        lastName?: string;
+        enabled?: boolean;
+      } = {};
+      if (typeof args.email === "string") {
+        changes.email = Email.fromString(args.email);
+      }
+      if (typeof args.firstName === "string") {
+        changes.firstName = args.firstName;
+      }
+      if (typeof args.lastName === "string") {
+        changes.lastName = args.lastName;
+      }
+      if (typeof args.enabled === "boolean") {
+        changes.enabled = args.enabled;
+      }
+      await new UpdateUserUseCase(deps.userRepository).execute({
+        id: UserId.fromString(String(args.id)),
+        changes: changes satisfies UserUpdate,
+      });
+      return textResult(`User ${String(args.id)} updated.`);
+    },
+  };
+}
+
+function listUserSessionsTool(deps: UserToolDeps): ToolDefinition {
+  return {
+    name: "keycloak_user_sessions_list",
+    title: "List user sessions",
+    description: "List a user's active sessions.",
+    level: ToolLevel.Read,
+    inputSchema: { id: z.string() },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+    },
+    async handler(args) {
+      const sessions = await new ListUserSessionsUseCase(
+        deps.userRepository,
+      ).execute(UserId.fromString(String(args.id)));
+      return textResult(JSON.stringify(sessions, null, 2));
+    },
+  };
+}
+
 export function buildUserTools(deps: UserToolDeps): ToolDefinition[] {
   return [
     searchUsersTool(deps),
     getUserTool(deps),
+    listUserSessionsTool(deps),
     createUserTool(deps),
+    updateUserTool(deps),
     setUserEnabledTool(deps),
     sendActionEmailTool(deps),
     resetUserPasswordTool(deps),

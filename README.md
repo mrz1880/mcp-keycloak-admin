@@ -148,10 +148,11 @@ See [docs/users.md](docs/users.md), [docs/roles.md](docs/roles.md),
 
 ## Roadmap
 
-The architecture is designed to grow the remaining Keycloak admin surface as
-thin use cases + tools: client scopes & protocol mappers, authentication flows,
-authorization services, and identity providers / user federation. See
-[docs/development.md](docs/development.md) for how to add one.
+The architecture is designed to keep growing as thin use cases + tools.
+Remaining candidates: authorization policy/permission CRUD and evaluation,
+authentication flow mutation (copy/add executions), and advanced federation and
+identity-provider configuration. See [docs/development.md](docs/development.md)
+for how to add one.
 
 ## Development
 

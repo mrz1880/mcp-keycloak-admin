@@ -1,0 +1,10 @@
+# Internal working documents — never committed
+docs/plans/
+
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.env.local
+.DS_Store

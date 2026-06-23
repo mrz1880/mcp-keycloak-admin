@@ -5,26 +5,38 @@ on:
     tags:
       - "v*"
 
-# Publishes to npm via Trusted Publishing (OIDC) — no NPM_TOKEN secret needed.
-# Configure the trusted publisher for this package on npmjs.com:
-#   package: mcp-keycloak-admin
-#   provider: GitHub Actions
-#   repository: mrz1880/mcp-keycloak-admin
-#   workflow: release.yml
+# Publishing strategy:
+#  - FIRST release (package does not exist yet): set an `NPM_TOKEN` repo secret
+#    (granular token, Read and write, "Bypass 2FA" enabled) — this workflow then
+#    publishes with it.
+#  - AFTER the package exists: configure Trusted Publishing on npmjs.com
+#      package → Settings → Trusted publishing → GitHub Actions
+#      repository: mrz1880/mcp-keycloak-admin, workflow: release.yml
+#    then DELETE the `NPM_TOKEN` secret. Subsequent releases publish via OIDC
+#    (no secret, short-lived credentials).
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+    env:
+      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-      # Trusted Publishing (OIDC) requires a recent npm.
+      # Trusted Publishing (OIDC) needs a recent npm.
       - run: npm install -g npm@latest
       - run: npm ci
       - run: npm run check
-      - run: npm publish --provenance --access public
+      - name: Publish with NPM_TOKEN (one-time bootstrap)
+        if: env.HAS_NPM_TOKEN == 'true'
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish via Trusted Publishing (OIDC, no token)
+        if: env.HAS_NPM_TOKEN != 'true'
+        run: npm publish --provenance --access public

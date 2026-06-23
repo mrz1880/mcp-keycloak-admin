@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-06-23
+
+### Documentation & tooling
+
+- Publish metadata for the official MCP registry: a `server.json` descriptor and
+  an `mcpName` link in `package.json`
+  (`io.github.mrz1880/mcp-keycloak-admin`).
+
 ## [0.2.0] - 2026-06-23
 
 ### Added

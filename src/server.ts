@@ -83,7 +83,7 @@ export function createServer(config: AppConfig): McpServer {
       ...buildUserTools({ userRepository, confirmers }),
       ...buildRoleTools({ roleRepository, confirmers }),
       ...buildClientTools({ clientRepository, confirmers }),
-      ...buildGroupTools({ groupRepository, confirmers }),
+      ...buildGroupTools({ groupRepository, roleRepository, confirmers }),
       ...buildEventRealmTools({ eventLog, realmInfo }),
     ],
     ToolAccessPolicy.of(config.readOnly),

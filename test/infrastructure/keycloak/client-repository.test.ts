@@ -46,4 +46,51 @@ describe("KeycloakClientRepository", () => {
     expect(fetch.requests[0]?.method).toBe("POST");
     expect(fetch.requests[0]?.url).toContain(`/clients/${UUID}/client-secret`);
   });
+
+  it("paginates the full client list across pages", async () => {
+    const fullPage = Array.from({ length: 100 }, (_, index) => ({
+      id: `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`,
+      clientId: `c${String(index)}`,
+    }));
+    const { repo, fetch } = makeRepo([
+      jsonResponse(fullPage),
+      jsonResponse([{ id: UUID, clientId: "last" }]),
+    ]);
+
+    const clients = await repo.list();
+
+    expect(clients).toHaveLength(101);
+    expect(fetch.requests[0]?.url).toContain("first=0&max=100");
+    expect(fetch.requests[1]?.url).toContain("first=100&max=100");
+  });
+
+  it("creates a client with a POST", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 201 })]);
+    await repo.create({
+      clientId: ClientId.fromString("new-client"),
+      enabled: true,
+      publicClient: false,
+      redirectUris: ["https://app/*"],
+    });
+    expect(fetch.requests[0]?.method).toBe("POST");
+    expect(fetch.requests[0]?.url).toBe(
+      "http://kc:8080/admin/realms/demo-realm/clients",
+    );
+    expect(fetch.requests[0]?.body).toContain('"clientId":"new-client"');
+  });
+
+  it("updates a client with a PUT of only the changed fields", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+    await repo.update(ClientUuid.fromString(UUID), { enabled: false });
+    expect(fetch.requests[0]?.method).toBe("PUT");
+    expect(fetch.requests[0]?.url).toContain(`/clients/${UUID}`);
+    expect(fetch.requests[0]?.body).toBe('{"enabled":false}');
+  });
+
+  it("deletes a client with a DELETE", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+    await repo.delete(ClientUuid.fromString(UUID));
+    expect(fetch.requests[0]?.method).toBe("DELETE");
+    expect(fetch.requests[0]?.url).toContain(`/clients/${UUID}`);
+  });
 });

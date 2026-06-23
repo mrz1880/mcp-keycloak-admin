@@ -26,7 +26,7 @@ export class KeycloakGroupRepository implements GroupRepository {
   constructor(private readonly client: KeycloakAdminClient) {}
 
   async list(): Promise<Group[]> {
-    const raw = await this.client.getJson<KeycloakGroup[]>("/groups");
+    const raw = await this.client.list<KeycloakGroup>("/groups");
     return raw.map(toGroup);
   }
 

@@ -4,6 +4,14 @@
   "description": "Model Context Protocol server to administer Keycloak through its Admin REST API",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrz1880/mcp-keycloak-admin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mrz1880/mcp-keycloak-admin/issues"
+  },
+  "homepage": "https://github.com/mrz1880/mcp-keycloak-admin#readme",
   "bin": {
     "mcp-keycloak-admin": "dist/index.js"
   },

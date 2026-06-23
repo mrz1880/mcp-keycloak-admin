@@ -1,6 +1,6 @@
 {
   "name": "mcp-keycloak-admin",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Model Context Protocol server to administer Keycloak through its Admin REST API",
   "license": "MIT",
   "type": "module",

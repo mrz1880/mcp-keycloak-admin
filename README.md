@@ -78,6 +78,49 @@ Add the server to your MCP client configuration:
 See [docs/setup-keycloak.md](docs/setup-keycloak.md) to create the `mcp-admin`
 client and grant it the least-privilege roles it needs.
 
+### Multiple Keycloak instances
+
+Each server entry targets **one** Keycloak (one base URL + realm + auth). To
+manage several environments, add **one entry per instance** — each fully
+isolated, with its own credentials and guardrails:
+
+```json
+{
+  "mcpServers": {
+    "kc-preprod": {
+      "command": "npx",
+      "args": ["-y", "mcp-keycloak-admin"],
+      "env": {
+        "KEYCLOAK_BASE_URL": "https://preprod.example.com",
+        "KEYCLOAK_REALM": "Pandi-Panda-Preprod",
+        "AUTH_MODE": "service_account",
+        "KC_CLIENT_ID": "mcp-admin",
+        "KC_CLIENT_SECRET": "…",
+        "ALLOWED_REALMS": "Pandi-Panda-Preprod"
+      }
+    },
+    "kc-prod": {
+      "command": "npx",
+      "args": ["-y", "mcp-keycloak-admin"],
+      "env": {
+        "KEYCLOAK_BASE_URL": "https://auth.example.com",
+        "KEYCLOAK_REALM": "Pandi-Panda",
+        "AUTH_MODE": "service_account",
+        "KC_CLIENT_ID": "mcp-admin",
+        "KC_CLIENT_SECRET": "…",
+        "READ_ONLY": "true",
+        "ALLOWED_REALMS": "Pandi-Panda"
+      }
+    }
+  }
+}
+```
+
+The client namespaces the tools per server (e.g. `kc-prod:keycloak_user_delete`),
+so there's no risk of running an operation against the wrong environment. This
+is the recommended pattern: you can, for example, keep production `READ_ONLY`
+while preprod stays writable.
+
 ## Configuration
 
 | Variable            | Required              | Description                                              |

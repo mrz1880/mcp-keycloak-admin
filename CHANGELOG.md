@@ -39,5 +39,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Client scope & mapper tools: `keycloak_client_scopes_list`,
   `keycloak_client_default_scopes_get`, `keycloak_client_mappers_list`,
   `keycloak_client_scope_assign`, `keycloak_client_scope_unassign`.
+- Identity provider tools: `keycloak_idp_list`, `keycloak_idp_get`,
+  `keycloak_idp_mappers_list`, `keycloak_idp_create`, `keycloak_idp_delete`.
 - Configuration loader, composition root, and stdio entrypoint.
 - Integration test running against a real Keycloak 26 container.

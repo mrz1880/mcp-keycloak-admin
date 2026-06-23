@@ -14,6 +14,7 @@ import { KeycloakClientRepository } from "./infrastructure/keycloak/client-repos
 import { KeycloakClientScopeRepository } from "./infrastructure/keycloak/client-scope-repository.js";
 import { KeycloakEventLog } from "./infrastructure/keycloak/event-log.js";
 import { KeycloakGroupRepository } from "./infrastructure/keycloak/group-repository.js";
+import { KeycloakIdentityProviderRepository } from "./infrastructure/keycloak/identity-provider-repository.js";
 import { KeycloakRealmInfo } from "./infrastructure/keycloak/realm-info.js";
 import { KeycloakRoleRepository } from "./infrastructure/keycloak/role-repository.js";
 import { KeycloakUserRepository } from "./infrastructure/keycloak/user-repository.js";
@@ -22,6 +23,7 @@ import { buildClientTools } from "./infrastructure/mcp/client-tools.js";
 import { McpConfirmerFactory } from "./infrastructure/mcp/confirmation/confirmer-factory.js";
 import { buildEventRealmTools } from "./infrastructure/mcp/event-realm-tools.js";
 import { buildGroupTools } from "./infrastructure/mcp/group-tools.js";
+import { buildIdpTools } from "./infrastructure/mcp/idp-tools.js";
 import { buildRoleTools } from "./infrastructure/mcp/role-tools.js";
 import {
   filterTools,
@@ -79,6 +81,9 @@ export function createServer(config: AppConfig): McpServer {
   const groupRepository = new KeycloakGroupRepository(client);
   const eventLog = new KeycloakEventLog(client);
   const realmInfo = new KeycloakRealmInfo(client);
+  const identityProviderRepository = new KeycloakIdentityProviderRepository(
+    client,
+  );
   const confirmers = new McpConfirmerFactory(server);
 
   const tools = filterTools(
@@ -92,6 +97,7 @@ export function createServer(config: AppConfig): McpServer {
         confirmers,
       }),
       ...buildGroupTools({ groupRepository, roleRepository, confirmers }),
+      ...buildIdpTools({ identityProviderRepository, confirmers }),
       ...buildEventRealmTools({ eventLog, realmInfo }),
     ],
     ToolAccessPolicy.of(config.readOnly),

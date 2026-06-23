@@ -122,6 +122,11 @@ Currently implemented:
 | `keycloak_group_role_assign`         | W     | Grant a realm role to a group.                        |
 | `keycloak_group_member_remove`       | D     | Remove a user from a group.                           |
 | `keycloak_group_delete`              | D     | Delete a group.                                       |
+| `keycloak_idp_list`                  | R     | List identity providers.                              |
+| `keycloak_idp_get`                   | R     | Fetch an identity provider by alias.                  |
+| `keycloak_idp_mappers_list`          | R     | List an identity provider's mappers.                  |
+| `keycloak_idp_create`                | W     | Create an identity provider.                          |
+| `keycloak_idp_delete`                | D     | Delete an identity provider.                          |
 | `keycloak_events_login`              | R     | Read recent login events (filterable).                |
 | `keycloak_events_admin`              | R     | Read recent admin events.                             |
 | `keycloak_realm_get_config`          | R     | Read key realm configuration flags.                   |

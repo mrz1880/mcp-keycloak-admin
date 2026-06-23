@@ -9,7 +9,7 @@ import { KeycloakUserRepository } from "../../../src/infrastructure/keycloak/use
 import { FakeFetch, jsonResponse } from "../../support/fake-fetch.js";
 import { StubTokenProvider } from "../../support/stub-token-provider.js";
 
-const config = { baseUrl: "http://kc:8080", realm: "Pandi-Panda" };
+const config = { baseUrl: "http://kc:8080", realm: "demo-realm" };
 const ID = "93d199e4-17b7-4035-95a5-237a748eec03";
 
 function makeRepo(responses: Response[]): {
@@ -75,7 +75,7 @@ describe("KeycloakUserRepository", () => {
 
     expect(fetch.requests[0]?.method).toBe("POST");
     expect(fetch.requests[0]?.url).toBe(
-      "http://kc:8080/admin/realms/Pandi-Panda/users",
+      "http://kc:8080/admin/realms/demo-realm/users",
     );
     expect(fetch.requests[0]?.body).toContain('"username":"newbie"');
   });

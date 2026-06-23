@@ -5,7 +5,7 @@ import { KeycloakError } from "../../../src/infrastructure/keycloak/errors.js";
 import { FakeFetch, jsonResponse } from "../../support/fake-fetch.js";
 import { StubTokenProvider } from "../../support/stub-token-provider.js";
 
-const config = { baseUrl: "http://kc:8080", realm: "Pandi-Panda" };
+const config = { baseUrl: "http://kc:8080", realm: "demo-realm" };
 
 describe("KeycloakAdminClient", () => {
   it("injects the bearer token and targets the realm admin path", async () => {
@@ -20,7 +20,7 @@ describe("KeycloakAdminClient", () => {
 
     expect(result).toEqual([{ id: "1" }]);
     expect(fetch.requests[0]?.url).toBe(
-      "http://kc:8080/admin/realms/Pandi-Panda/users",
+      "http://kc:8080/admin/realms/demo-realm/users",
     );
     expect(fetch.requests[0]?.authorization).toBe("Bearer tok");
   });

@@ -13,7 +13,7 @@ const eventLog: EventLog = {
 
 const realmInfo: RealmInfo = {
   getRealmConfig: () =>
-    Promise.resolve({ realm: "Pandi-Panda", enabled: true, secret: "x" }),
+    Promise.resolve({ realm: "demo-realm", enabled: true, secret: "x" }),
   serverInfo: () => Promise.resolve({ systemInfo: { version: "26.0.5" } }),
 };
 
@@ -29,7 +29,7 @@ describe("event & realm tools", () => {
       (candidate) => candidate.name === "keycloak_realm_get_config",
     );
     const result = await tool!.handler({});
-    expect(result.content[0]?.text).toContain("Pandi-Panda");
+    expect(result.content[0]?.text).toContain("demo-realm");
     expect(result.content[0]?.text).not.toContain("secret");
   });
 

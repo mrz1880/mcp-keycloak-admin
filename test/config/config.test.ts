@@ -4,7 +4,7 @@ import { loadConfig } from "../../src/config/config.js";
 
 const serviceAccountEnv = {
   KEYCLOAK_BASE_URL: "http://localhost:8080",
-  KEYCLOAK_REALM: "Pandi-Panda",
+  KEYCLOAK_REALM: "demo-realm",
   AUTH_MODE: "service_account",
   KC_CLIENT_ID: "mcp-admin",
   KC_CLIENT_SECRET: "secret",
@@ -13,7 +13,7 @@ const serviceAccountEnv = {
 describe("loadConfig", () => {
   it("loads a valid service-account configuration", () => {
     const config = loadConfig(serviceAccountEnv);
-    expect(config.realm).toBe("Pandi-Panda");
+    expect(config.realm).toBe("demo-realm");
     expect(config.readOnly).toBe(false);
     expect(config.allowedRealms).toEqual([]);
     expect(config.auth).toEqual({
@@ -32,7 +32,7 @@ describe("loadConfig", () => {
     expect(() =>
       loadConfig({
         KEYCLOAK_BASE_URL: "http://localhost:8080",
-        KEYCLOAK_REALM: "Pandi-Panda",
+        KEYCLOAK_REALM: "demo-realm",
         AUTH_MODE: "password",
       }),
     ).toThrow(/KC_ADMIN/);
@@ -42,9 +42,9 @@ describe("loadConfig", () => {
     const config = loadConfig({
       ...serviceAccountEnv,
       READ_ONLY: "true",
-      ALLOWED_REALMS: "Pandi-Panda, master",
+      ALLOWED_REALMS: "demo-realm, master",
     });
     expect(config.readOnly).toBe(true);
-    expect(config.allowedRealms).toEqual(["Pandi-Panda", "master"]);
+    expect(config.allowedRealms).toEqual(["demo-realm", "master"]);
   });
 });

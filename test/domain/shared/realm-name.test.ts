@@ -4,12 +4,12 @@ import { RealmName } from "../../../src/domain/shared/realm-name.js";
 
 describe("RealmName", () => {
   it("exposes the realm it was created from", () => {
-    expect(RealmName.fromString("Pandi-Panda").toString()).toBe("Pandi-Panda");
+    expect(RealmName.fromString("demo-realm").toString()).toBe("demo-realm");
   });
 
   it("trims surrounding whitespace", () => {
-    expect(RealmName.fromString("  Pandi-Panda  ").toString()).toBe(
-      "Pandi-Panda",
+    expect(RealmName.fromString("  demo-realm  ").toString()).toBe(
+      "demo-realm",
     );
   });
 
@@ -19,17 +19,15 @@ describe("RealmName", () => {
 
   it("is equal to another realm with the same value", () => {
     expect(
-      RealmName.fromString("Pandi-Panda").equals(
-        RealmName.fromString("Pandi-Panda"),
+      RealmName.fromString("demo-realm").equals(
+        RealmName.fromString("demo-realm"),
       ),
     ).toBe(true);
   });
 
   it("differs from a realm with another value", () => {
     expect(
-      RealmName.fromString("Pandi-Panda").equals(
-        RealmName.fromString("master"),
-      ),
+      RealmName.fromString("demo-realm").equals(RealmName.fromString("master")),
     ).toBe(false);
   });
 });

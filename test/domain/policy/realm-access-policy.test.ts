@@ -4,7 +4,7 @@ import { RealmAccessPolicy } from "../../../src/domain/policy/realm-access-polic
 import { RealmName } from "../../../src/domain/shared/realm-name.js";
 
 describe("RealmAccessPolicy", () => {
-  const pandi = RealmName.fromString("Pandi-Panda");
+  const pandi = RealmName.fromString("demo-realm");
   const master = RealmName.fromString("master");
 
   it("rejects a realm absent from a non-empty allow-list", () => {

@@ -6,7 +6,7 @@ import { createServer } from "../src/server.js";
 
 const baseConfig: AppConfig = {
   baseUrl: "http://localhost:8080",
-  realm: "Pandi-Panda",
+  realm: "demo-realm",
   readOnly: false,
   allowedRealms: [],
   auth: { mode: "service_account", clientId: "mcp-admin", clientSecret: "s" },
@@ -20,6 +20,6 @@ describe("createServer", () => {
   it("rejects a target realm outside the allow-list", () => {
     expect(() =>
       createServer({ ...baseConfig, allowedRealms: ["other"] }),
-    ).toThrow(/Pandi-Panda/);
+    ).toThrow(/demo-realm/);
   });
 });

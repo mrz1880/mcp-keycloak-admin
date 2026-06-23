@@ -6,7 +6,7 @@ import { KeycloakRealmInfo } from "../../../src/infrastructure/keycloak/realm-in
 import { FakeFetch, jsonResponse } from "../../support/fake-fetch.js";
 import { StubTokenProvider } from "../../support/stub-token-provider.js";
 
-const config = { baseUrl: "http://kc:8080", realm: "Pandi-Panda" };
+const config = { baseUrl: "http://kc:8080", realm: "demo-realm" };
 
 function setup(responses: Response[]): {
   client: KeycloakAdminClient;
@@ -51,11 +51,11 @@ describe("KeycloakEventLog", () => {
 
 describe("KeycloakRealmInfo", () => {
   it("reads the realm config from the realm root", async () => {
-    const { client, fetch } = setup([jsonResponse({ realm: "Pandi-Panda" })]);
+    const { client, fetch } = setup([jsonResponse({ realm: "demo-realm" })]);
     const realmConfig = await new KeycloakRealmInfo(client).getRealmConfig();
-    expect(realmConfig.realm).toBe("Pandi-Panda");
+    expect(realmConfig.realm).toBe("demo-realm");
     expect(fetch.requests[0]?.url).toBe(
-      "http://kc:8080/admin/realms/Pandi-Panda",
+      "http://kc:8080/admin/realms/demo-realm",
     );
   });
 

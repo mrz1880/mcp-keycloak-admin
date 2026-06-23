@@ -12,7 +12,7 @@ function jsonResponse(body: unknown): Response {
 
 const config = {
   baseUrl: "http://kc:8080",
-  realm: "Pandi-Panda",
+  realm: "demo-realm",
   clientId: "mcp-admin",
   clientSecret: "s3cr3t",
 };
@@ -35,7 +35,7 @@ describe("createClientCredentialsProvider", () => {
 
     expect(token.toString()).toBe("tok");
     expect(captured!.url).toBe(
-      "http://kc:8080/realms/Pandi-Panda/protocol/openid-connect/token",
+      "http://kc:8080/realms/demo-realm/protocol/openid-connect/token",
     );
     expect(captured!.body).toContain("grant_type=client_credentials");
     expect(captured!.body).toContain("client_id=mcp-admin");

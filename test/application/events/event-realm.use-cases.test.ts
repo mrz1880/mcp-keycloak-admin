@@ -24,8 +24,7 @@ const eventLog: EventLog = {
 };
 
 const realmInfo: RealmInfo = {
-  getRealmConfig: () =>
-    Promise.resolve({ realm: "Pandi-Panda", enabled: true }),
+  getRealmConfig: () => Promise.resolve({ realm: "demo-realm", enabled: true }),
   serverInfo: () => Promise.resolve({ systemInfo: { version: "26.0.5" } }),
 };
 
@@ -46,7 +45,7 @@ describe("event & realm use cases", () => {
 
   it("returns the realm config", async () => {
     const config = await new GetRealmConfigUseCase(realmInfo).execute();
-    expect(config.realm).toBe("Pandi-Panda");
+    expect(config.realm).toBe("demo-realm");
   });
 
   it("returns server info", async () => {

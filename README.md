@@ -51,7 +51,7 @@ Add the server to your MCP client configuration:
       "args": ["-y", "mcp-keycloak-admin"],
       "env": {
         "KEYCLOAK_BASE_URL": "http://localhost:8080",
-        "KEYCLOAK_REALM": "Pandi-Panda",
+        "KEYCLOAK_REALM": "demo-realm",
         "AUTH_MODE": "service_account",
         "KC_CLIENT_ID": "mcp-admin",
         "KC_CLIENT_SECRET": "your-secret"

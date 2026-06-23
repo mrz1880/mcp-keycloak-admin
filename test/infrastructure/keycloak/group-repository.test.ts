@@ -8,7 +8,7 @@ import { KeycloakGroupRepository } from "../../../src/infrastructure/keycloak/gr
 import { FakeFetch, jsonResponse } from "../../support/fake-fetch.js";
 import { StubTokenProvider } from "../../support/stub-token-provider.js";
 
-const config = { baseUrl: "http://kc:8080", realm: "Pandi-Panda" };
+const config = { baseUrl: "http://kc:8080", realm: "demo-realm" };
 const GROUP = "a1a1a1a1-17b7-4035-95a5-237a748eec03";
 const USER = "93d199e4-17b7-4035-95a5-237a748eec03";
 

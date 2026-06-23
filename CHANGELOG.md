@@ -21,6 +21,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The client, realm-role and group list endpoints now paginate through every
   page instead of returning only Keycloak's first page.
 
+### Documentation & tooling
+
+- `SECURITY.md`, `docs/quickstart.md`, and a README section on running multiple
+  Keycloak instances (one server entry each).
+- Guidance and `.gitignore` entries to keep credential-bearing MCP client
+  configs (`.mcp.json`, …) out of version control.
+- CI now builds in the quality job and enforces a coverage floor.
+
 ## [0.1.0] - 2026-06-23
 
 ### Added

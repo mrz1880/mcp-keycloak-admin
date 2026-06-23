@@ -22,6 +22,8 @@ npx -y mcp-keycloak-admin
 
 The server speaks MCP over stdio, so you normally wire it into an MCP client
 rather than running it by hand — see [Usage with an MCP client](#usage-with-an-mcp-client).
+New to it? The [Quickstart](docs/quickstart.md) spins up a local Keycloak and a
+client config in a couple of minutes.
 
 ## Why
 
@@ -117,7 +119,14 @@ Currently implemented:
 | `keycloak_user_roles_get`                   | R     | List a user's realm roles.                            |
 | `keycloak_user_role_assign`                 | W     | Grant a realm role to a user.                         |
 | `keycloak_user_role_unassign`               | D     | Revoke a realm role from a user.                      |
+| `keycloak_client_roles_list`                | R     | List the roles defined on a client.                   |
+| `keycloak_user_client_roles_get`            | R     | List a user's client roles.                           |
+| `keycloak_user_client_role_assign`          | W     | Grant a client role to a user.                        |
+| `keycloak_user_client_role_unassign`        | D     | Revoke a client role from a user.                     |
 | `keycloak_client_list`                      | R     | List the realm clients.                               |
+| `keycloak_client_create`                    | W     | Create a realm client.                                |
+| `keycloak_client_update`                    | W     | Update a client (enabled, public, redirect URIs).     |
+| `keycloak_client_delete`                    | D     | Delete a client.                                      |
 | `keycloak_client_get`                       | R     | Fetch a client by its clientId.                       |
 | `keycloak_client_get_secret`                | R     | Read a client secret (masked unless `reveal`).        |
 | `keycloak_client_scopes_list`               | R     | List the realm's client scopes.                       |

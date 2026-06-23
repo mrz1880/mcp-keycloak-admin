@@ -33,3 +33,36 @@ until updated. The new secret is returned on success.
 | ---------- | ------- | -------- | ------------------------------ |
 | `clientId` | string  | yes      | The client's id.               |
 | `confirm`  | boolean | no       | Elicitation fallback approval. |
+
+## `keycloak_client_create` [W]
+
+Create a realm client.
+
+| Parameter      | Type     | Required | Description                   |
+| -------------- | -------- | -------- | ----------------------------- |
+| `clientId`     | string   | yes      | The human-readable client id. |
+| `enabled`      | boolean  | no       | Defaults to `true`.           |
+| `publicClient` | boolean  | no       | `true` for a public client.   |
+| `redirectUris` | string[] | no       | Allowed redirect URIs.        |
+
+## `keycloak_client_update` [W]
+
+Update a client's `enabled`, `publicClient` or `redirectUris` (only the supplied
+fields change).
+
+| Parameter      | Type     | Required | Description      |
+| -------------- | -------- | -------- | ---------------- |
+| `clientId`     | string   | yes      | The client's id. |
+| `enabled`      | boolean  | no       |                  |
+| `publicClient` | boolean  | no       |                  |
+| `redirectUris` | string[] | no       |                  |
+
+## `keycloak_client_delete` [D]
+
+Delete a client. **Destructive** — requires confirmation. Removes the client and
+everything attached to it; applications using it stop working.
+
+| Parameter  | Type    | Required | Description                    |
+| ---------- | ------- | -------- | ------------------------------ |
+| `clientId` | string  | yes      | The client's id.               |
+| `confirm`  | boolean | no       | Elicitation fallback approval. |

@@ -35,3 +35,17 @@ every permission granted by the role.
 | `userId`  | string  | yes      | The user's id (UUID).          |
 | `role`    | string  | yes      | The realm role name.           |
 | `confirm` | boolean | no       | Elicitation fallback approval. |
+
+## Client roles
+
+The same operations are available for **client** roles. They take a `clientId`
+(resolved to the client's internal id).
+
+- `keycloak_client_roles_list` **[R]** — list the roles defined on a client
+  (`clientId`).
+- `keycloak_user_client_roles_get` **[R]** — list a user's client roles
+  (`userId`, `clientId`).
+- `keycloak_user_client_role_assign` **[W]** — grant a client role to a user
+  (`userId`, `clientId`, `role`).
+- `keycloak_user_client_role_unassign` **[D]** — revoke a client role from a user
+  (`userId`, `clientId`, `role`, `confirm`). Requires confirmation.

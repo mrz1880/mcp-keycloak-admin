@@ -11,11 +11,13 @@ import { systemClock } from "./infrastructure/auth/system-clock.js";
 import type { FetchFn } from "./infrastructure/auth/token-endpoint.js";
 import { KeycloakAdminClient } from "./infrastructure/keycloak/admin-client.js";
 import { KeycloakClientRepository } from "./infrastructure/keycloak/client-repository.js";
+import { KeycloakClientScopeRepository } from "./infrastructure/keycloak/client-scope-repository.js";
 import { KeycloakEventLog } from "./infrastructure/keycloak/event-log.js";
 import { KeycloakGroupRepository } from "./infrastructure/keycloak/group-repository.js";
 import { KeycloakRealmInfo } from "./infrastructure/keycloak/realm-info.js";
 import { KeycloakRoleRepository } from "./infrastructure/keycloak/role-repository.js";
 import { KeycloakUserRepository } from "./infrastructure/keycloak/user-repository.js";
+import { buildClientScopeTools } from "./infrastructure/mcp/client-scope-tools.js";
 import { buildClientTools } from "./infrastructure/mcp/client-tools.js";
 import { McpConfirmerFactory } from "./infrastructure/mcp/confirmation/confirmer-factory.js";
 import { buildEventRealmTools } from "./infrastructure/mcp/event-realm-tools.js";
@@ -73,6 +75,7 @@ export function createServer(config: AppConfig): McpServer {
   const userRepository = new KeycloakUserRepository(client);
   const roleRepository = new KeycloakRoleRepository(client);
   const clientRepository = new KeycloakClientRepository(client);
+  const clientScopeRepository = new KeycloakClientScopeRepository(client);
   const groupRepository = new KeycloakGroupRepository(client);
   const eventLog = new KeycloakEventLog(client);
   const realmInfo = new KeycloakRealmInfo(client);
@@ -83,6 +86,11 @@ export function createServer(config: AppConfig): McpServer {
       ...buildUserTools({ userRepository, confirmers }),
       ...buildRoleTools({ roleRepository, confirmers }),
       ...buildClientTools({ clientRepository, confirmers }),
+      ...buildClientScopeTools({
+        clientRepository,
+        clientScopeRepository,
+        confirmers,
+      }),
       ...buildGroupTools({ groupRepository, roleRepository, confirmers }),
       ...buildEventRealmTools({ eventLog, realmInfo }),
     ],

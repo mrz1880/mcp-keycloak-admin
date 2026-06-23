@@ -1,4 +1,8 @@
 import type { ClientSummary } from "../../domain/client/client-summary.js";
+import type {
+  ClientUpdate,
+  NewClient,
+} from "../../domain/client/new-client.js";
 import type { ClientRepository } from "../../domain/ports/client-repository.js";
 import { ClientId } from "../../domain/shared/client-id.js";
 import { ClientSecret } from "../../domain/shared/client-secret.js";
@@ -53,5 +57,32 @@ export class KeycloakClientRepository implements ClientRepository {
       `/clients/${uuid.toString()}/client-secret`,
     );
     return ClientSecret.fromString(raw.value);
+  }
+
+  create(client: NewClient): Promise<void> {
+    return this.client.post("/clients", {
+      clientId: client.clientId.toString(),
+      enabled: client.enabled,
+      publicClient: client.publicClient,
+      redirectUris: client.redirectUris,
+    });
+  }
+
+  update(uuid: ClientUuid, changes: ClientUpdate): Promise<void> {
+    const body: Record<string, unknown> = {};
+    if (changes.enabled !== undefined) {
+      body.enabled = changes.enabled;
+    }
+    if (changes.publicClient !== undefined) {
+      body.publicClient = changes.publicClient;
+    }
+    if (changes.redirectUris !== undefined) {
+      body.redirectUris = changes.redirectUris;
+    }
+    return this.client.put(`/clients/${uuid.toString()}`, body);
+  }
+
+  delete(uuid: ClientUuid): Promise<void> {
+    return this.client.delete(`/clients/${uuid.toString()}`);
   }
 }

@@ -1,4 +1,5 @@
 import type { ClientSummary } from "../client/client-summary.js";
+import type { ClientUpdate, NewClient } from "../client/new-client.js";
 import type { ClientId } from "../shared/client-id.js";
 import type { ClientSecret } from "../shared/client-secret.js";
 import type { ClientUuid } from "../shared/client-uuid.js";
@@ -8,4 +9,7 @@ export interface ClientRepository {
   findByClientId(clientId: ClientId): Promise<ClientSummary | null>;
   getSecret(uuid: ClientUuid): Promise<ClientSecret>;
   regenerateSecret(uuid: ClientUuid): Promise<ClientSecret>;
+  create(client: NewClient): Promise<void>;
+  update(uuid: ClientUuid, changes: ClientUpdate): Promise<void>;
+  delete(uuid: ClientUuid): Promise<void>;
 }

@@ -28,7 +28,13 @@ function listTool(
     title,
     description,
     level: ToolLevel.Read,
-    inputSchema: { clientId: z.string() },
+    inputSchema: {
+      clientId: z
+        .string()
+        .describe(
+          "The Keycloak internal id of the client whose authorization-services configuration to read. This is the UUID-style id (clientUuid), not the human-readable clientId string; obtain it from keycloak_clients_list. Required.",
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -50,7 +56,7 @@ export function buildAuthzTools(deps: AuthzToolDeps): ToolDefinition[] {
     listTool(
       "keycloak_authz_resources_list",
       "List authorization resources",
-      "List a client's authorization-services resources.",
+      "Lists the authorization-services resources defined on a Keycloak client (the protected resources that policies and permissions apply to). Read-only and idempotent: it performs no writes and returns the same data for unchanged configuration. Use it to inspect a client's fine-grained authorization model; call keycloak_clients_list first to obtain the client's internal id, and pair it with keycloak_authz_policies_list and keycloak_authz_permissions_list for the full picture. Returns a JSON array of resource entries, or the text \"Client not found.\" when no client matches the given id.",
       (clientId) =>
         new ListAuthzResourcesUseCase(
           deps.clientRepository,
@@ -60,7 +66,7 @@ export function buildAuthzTools(deps: AuthzToolDeps): ToolDefinition[] {
     listTool(
       "keycloak_authz_policies_list",
       "List authorization policies",
-      "List a client's authorization-services policies.",
+      "Lists the authorization-services policies defined on a Keycloak client (the rules, such as role, user, or JS policies, that decide whether access is granted). Read-only and idempotent: it performs no writes and returns the same data for unchanged configuration. Use it to review the policies that back a client's permissions; call keycloak_clients_list first to obtain the client's internal id, and combine with keycloak_authz_resources_list and keycloak_authz_permissions_list to understand the whole authorization model. Returns a JSON array of policy entries, or the text \"Client not found.\" when no client matches the given id.",
       (clientId) =>
         new ListAuthzPoliciesUseCase(
           deps.clientRepository,
@@ -70,7 +76,7 @@ export function buildAuthzTools(deps: AuthzToolDeps): ToolDefinition[] {
     listTool(
       "keycloak_authz_permissions_list",
       "List authorization permissions",
-      "List a client's authorization-services permissions.",
+      "Lists the authorization-services permissions defined on a Keycloak client (the bindings that tie resources and/or scopes to the policies that govern them). Read-only and idempotent: it performs no writes and returns the same data for unchanged configuration. Use it to see how a client's resources are protected; call keycloak_clients_list first to obtain the client's internal id, and pair with keycloak_authz_resources_list and keycloak_authz_policies_list for full context. Returns a JSON array of permission entries, or the text \"Client not found.\" when no client matches the given id.",
       (clientId) =>
         new ListAuthzPermissionsUseCase(
           deps.clientRepository,

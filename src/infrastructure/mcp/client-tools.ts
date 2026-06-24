@@ -33,7 +33,12 @@ function listClientsTool(deps: ClientToolDeps): ToolDefinition {
   return {
     name: "keycloak_client_list",
     title: "List clients",
-    description: "List the realm clients.",
+    description:
+      "List all OAuth/OIDC clients registered in the configured Keycloak realm. " +
+      "Read-only and idempotent; it does not modify anything. Use this to discover " +
+      "clients before calling keycloak_client_get, keycloak_client_update, or " +
+      "keycloak_client_delete. Takes no parameters and returns a JSON array where " +
+      "each entry has uuid, clientId, enabled, and publicClient.",
     level: ToolLevel.Read,
     inputSchema: {},
     annotations: {
@@ -54,9 +59,20 @@ function getClientTool(deps: ClientToolDeps): ToolDefinition {
   return {
     name: "keycloak_client_get",
     title: "Get client",
-    description: "Fetch a client by its clientId.",
+    description:
+      "Fetch a single realm client by its clientId. Read-only and idempotent; it " +
+      "does not modify anything. Use keycloak_client_list first if you do not know " +
+      "the exact clientId. Returns a JSON object with uuid, clientId, enabled, and " +
+      'publicClient, or the text "Client not found." when no client matches.',
     level: ToolLevel.Read,
-    inputSchema: { clientId: z.string() },
+    inputSchema: {
+      clientId: z
+        .string()
+        .describe(
+          "The client's clientId (the human-readable OAuth/OIDC client identifier, " +
+            'e.g. "account" or "my-app"), not the internal UUID. Required.',
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -80,9 +96,30 @@ function getClientSecretTool(deps: ClientToolDeps): ToolDefinition {
     name: "keycloak_client_get_secret",
     title: "Get client secret",
     description:
-      "Read a confidential client's secret. Masked unless reveal is true.",
+      "Read the current secret of a confidential (non-public) realm client. Read-only " +
+      "and idempotent; it does not change the secret. By default the secret is returned " +
+      "masked; pass reveal=true to return the plaintext value. Use keycloak_client_get " +
+      "to confirm a client is confidential first, and keycloak_client_regenerate_secret " +
+      'to rotate it. Returns the (masked or plaintext) secret string, or "Client not ' +
+      'found." when no client matches.',
     level: ToolLevel.Read,
-    inputSchema: { clientId: z.string(), reveal: z.boolean().optional() },
+    inputSchema: {
+      clientId: z
+        .string()
+        .describe(
+          "The client's clientId (the human-readable OAuth/OIDC client identifier, " +
+            'e.g. "my-app"), not the internal UUID. Required. The client must be ' +
+            "confidential (publicClient=false) to have a secret.",
+        ),
+      reveal: z
+        .boolean()
+        .optional()
+        .describe(
+          "When true, return the plaintext secret; when false or omitted (default), " +
+            "return a masked value. Set to true only when the caller actually needs " +
+            "the raw secret.",
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -107,10 +144,31 @@ function regenerateClientSecretTool(deps: ClientToolDeps): ToolDefinition {
     name: "keycloak_client_regenerate_secret",
     title: "Regenerate client secret",
     description:
-      "Regenerate a confidential client's secret. Requires confirmation; the " +
-      "old secret stops working.",
+      "Regenerate (rotate) a confidential client's secret. This is a destructive, " +
+      "non-idempotent write: it invalidates the previous secret, which immediately " +
+      "stops working, so any system using the old value must be updated. Requires " +
+      "explicit confirmation via confirm=true (otherwise it aborts without changing " +
+      "anything). Use keycloak_client_get_secret to read the current secret without " +
+      "rotating. Returns the new plaintext secret, or a reason string when not " +
+      "regenerated.",
     level: ToolLevel.Destructive,
-    inputSchema: { clientId: z.string(), confirm: z.boolean().optional() },
+    inputSchema: {
+      clientId: z
+        .string()
+        .describe(
+          "The client's clientId (the human-readable OAuth/OIDC client identifier), " +
+            "not the internal UUID. Required. The client must be confidential " +
+            "(publicClient=false).",
+        ),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Must be true to actually rotate the secret. When false or omitted " +
+            "(default), the operation is aborted and nothing is changed; this is a " +
+            "safeguard against accidental rotation.",
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: true,
@@ -142,13 +200,44 @@ function createClientTool(deps: ClientToolDeps): ToolDefinition {
   return {
     name: "keycloak_client_create",
     title: "Create client",
-    description: "Create a realm client.",
+    description:
+      "Create a new OAuth/OIDC client in the configured realm. This is a write " +
+      "operation and is not idempotent: calling it again with the same clientId " +
+      "creates a conflict rather than reusing the existing client. Use " +
+      "keycloak_client_list or keycloak_client_get first to verify the clientId is " +
+      "not already taken, and keycloak_client_update to modify an existing client. " +
+      "Returns a confirmation message naming the created client.",
     level: ToolLevel.Write,
     inputSchema: {
-      clientId: z.string(),
-      enabled: z.boolean().optional(),
-      publicClient: z.boolean().optional(),
-      redirectUris: z.array(z.string()).optional(),
+      clientId: z
+        .string()
+        .describe(
+          "The clientId to assign to the new client (the human-readable OAuth/OIDC " +
+            'identifier, e.g. "my-app"). Required and must be unique within the realm.',
+        ),
+      enabled: z
+        .boolean()
+        .optional()
+        .describe(
+          "Whether the client is enabled. Defaults to true; the client is created " +
+            "disabled only when this is explicitly set to false.",
+        ),
+      publicClient: z
+        .boolean()
+        .optional()
+        .describe(
+          "Whether the client is public (no client secret, e.g. SPA or mobile app). " +
+            "Defaults to false, creating a confidential client; set to true for a " +
+            "public client.",
+        ),
+      redirectUris: z
+        .array(z.string())
+        .optional()
+        .describe(
+          "Allowed OAuth redirect/callback URIs as a list of strings (e.g. " +
+            '["https://app.example.com/callback"]). Optional; defaults to an empty ' +
+            "list when omitted.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -171,13 +260,44 @@ function updateClientTool(deps: ClientToolDeps): ToolDefinition {
   return {
     name: "keycloak_client_update",
     title: "Update client",
-    description: "Update a client's enabled, public flag or redirect URIs.",
+    description:
+      "Update an existing client's enabled flag, public flag, and/or redirect URIs. " +
+      "Only the fields you supply are changed; omitted fields are left untouched. " +
+      "This is a write operation and is idempotent: applying the same values again " +
+      "yields the same state. Use keycloak_client_list or keycloak_client_get to find " +
+      "the client first. Returns a confirmation message, or a reason string (e.g. when " +
+      "the client does not exist).",
     level: ToolLevel.Write,
     inputSchema: {
-      clientId: z.string(),
-      enabled: z.boolean().optional(),
-      publicClient: z.boolean().optional(),
-      redirectUris: z.array(z.string()).optional(),
+      clientId: z
+        .string()
+        .describe(
+          "The clientId of the existing client to update (the human-readable " +
+            "OAuth/OIDC identifier), not the internal UUID. Required; identifies the " +
+            "target and is not itself changed.",
+        ),
+      enabled: z
+        .boolean()
+        .optional()
+        .describe(
+          "New enabled state for the client. Omit to leave the current value " +
+            "unchanged; the change is applied only when a boolean is provided.",
+        ),
+      publicClient: z
+        .boolean()
+        .optional()
+        .describe(
+          "New public/confidential flag (true = public, false = confidential). Omit " +
+            "to leave the current value unchanged.",
+        ),
+      redirectUris: z
+        .array(z.string())
+        .optional()
+        .describe(
+          "New full list of allowed redirect/callback URIs, replacing the existing " +
+            "list. Omit to leave the current URIs unchanged; pass an empty array to " +
+            "clear them.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -218,9 +338,30 @@ function deleteClientTool(deps: ClientToolDeps): ToolDefinition {
   return {
     name: "keycloak_client_delete",
     title: "Delete client",
-    description: "Delete a client. Requires confirmation.",
+    description:
+      "Permanently delete a client from the realm. This is a destructive operation and " +
+      "is not idempotent: once deleted, deleting the same clientId again fails because " +
+      "it no longer exists. Requires explicit confirmation via confirm=true (otherwise " +
+      "it aborts without deleting). Use keycloak_client_get to verify the target first, " +
+      "and keycloak_client_update to merely disable a client instead of removing it. " +
+      "Returns a confirmation message, or a reason string when not deleted.",
     level: ToolLevel.Destructive,
-    inputSchema: { clientId: z.string(), confirm: z.boolean().optional() },
+    inputSchema: {
+      clientId: z
+        .string()
+        .describe(
+          "The clientId of the client to delete (the human-readable OAuth/OIDC " +
+            "identifier), not the internal UUID. Required.",
+        ),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Must be true to actually delete the client. When false or omitted " +
+            "(default), the operation is aborted and nothing is removed; this guards " +
+            "against accidental deletion.",
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: true,

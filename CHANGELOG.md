@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-06-24
+
+### Documentation & tooling
+
+- Richer tool definitions: every tool now has a fuller description (purpose,
+  when to use it, side effects and return value) and every parameter carries a
+  description, improving how assistants understand and call each tool.
+- `glama.json` to declare repository maintainers.
+
 ## [0.2.1] - 2026-06-23
 
 ### Documentation & tooling

@@ -65,14 +65,45 @@ function searchUsersTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_search",
     title: "Search users",
-    description: "Search realm users by email, username or free text.",
+    description:
+      "Read-only. Searches users in the configured realm and returns a JSON array of matches, each with id, username, email and enabled flag. Use this to discover a user's id before calling id-based tools such as keycloak_user_get, keycloak_user_update or keycloak_user_delete. All filters are optional and combined; with no filters it returns the first page of users. Results are paginated and capped at 500 per call.",
     level: ToolLevel.Read,
     inputSchema: {
-      email: z.string().optional(),
-      username: z.string().optional(),
-      search: z.string().optional(),
-      first: z.number().int().min(0).optional(),
-      max: z.number().int().min(1).max(500).optional(),
+      email: z
+        .string()
+        .optional()
+        .describe(
+          'Filter by email address (e.g. "jane@example.com"). Optional; omit to not filter by email.',
+        ),
+      username: z
+        .string()
+        .optional()
+        .describe(
+          'Filter by exact or partial username (e.g. "jane"). Optional; omit to not filter by username.',
+        ),
+      search: z
+        .string()
+        .optional()
+        .describe(
+          "Free-text search across username, email, first and last name. Optional; omit to not apply a text search.",
+        ),
+      first: z
+        .number()
+        .int()
+        .min(0)
+        .optional()
+        .describe(
+          "Zero-based offset of the first result, for pagination. Integer >= 0. Defaults to 0 when omitted.",
+        ),
+      max: z
+        .number()
+        .int()
+        .min(1)
+        .max(500)
+        .optional()
+        .describe(
+          "Maximum number of users to return. Integer between 1 and 500. Defaults to 20 when omitted.",
+        ),
     },
     annotations: {
       readOnlyHint: true,
@@ -92,9 +123,16 @@ function getUserTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_get",
     title: "Get user",
-    description: "Fetch a single user by id.",
+    description:
+      'Read-only. Fetches a single realm user by id and returns a JSON object with id, username, email and enabled flag, or the text "User not found." if no user has that id. Use keycloak_user_search first if you only know a username or email and need the id. Idempotent: repeated calls return the same result without changing anything.',
     level: ToolLevel.Read,
-    inputSchema: { id: z.string() },
+    inputSchema: {
+      id: z
+        .string()
+        .describe(
+          'The Keycloak user id (UUID), e.g. "8f14e45f-ceea-467e-9b3c-1234567890ab". Required; obtain it from keycloak_user_search.',
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -117,13 +155,33 @@ function createUserTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_create",
     title: "Create user",
-    description: "Create a realm user.",
+    description:
+      "Write operation that creates a new realm user and returns a confirmation message with the username. It does not set a password, so call keycloak_user_reset_password afterwards to give the account credentials; it also does not send any email. Not idempotent: calling it again with the same username creates a conflict rather than a duplicate. Use keycloak_user_update to change an existing user instead of recreating it.",
     level: ToolLevel.Write,
     inputSchema: {
-      username: z.string(),
-      email: z.string().optional(),
-      enabled: z.boolean().optional(),
-      emailVerified: z.boolean().optional(),
+      username: z
+        .string()
+        .describe(
+          'Login username for the new user (e.g. "jane.doe"). Required and must be unique within the realm.',
+        ),
+      email: z
+        .string()
+        .optional()
+        .describe(
+          'Email address for the new user (e.g. "jane@example.com"). Optional; omit to create the user without an email.',
+        ),
+      enabled: z
+        .boolean()
+        .optional()
+        .describe(
+          "Whether the account can log in. Optional; defaults to true (enabled) unless explicitly set to false.",
+        ),
+      emailVerified: z
+        .boolean()
+        .optional()
+        .describe(
+          "Whether the email is marked as already verified. Optional; defaults to false unless explicitly set to true.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -149,9 +207,21 @@ function setUserEnabledTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_set_enabled",
     title: "Enable or disable user",
-    description: "Enable or disable a user account.",
+    description:
+      "Write operation that enables or disables a single user account by id, returning a confirmation message. Disabling blocks the user from logging in but does not delete the account or revoke existing sessions; use keycloak_user_logout to terminate active sessions, or keycloak_user_delete to remove the account. Idempotent: setting the same enabled value repeatedly leaves the account in the same state.",
     level: ToolLevel.Write,
-    inputSchema: { id: z.string(), enabled: z.boolean() },
+    inputSchema: {
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) of the account to enable or disable. Required; obtain it from keycloak_user_search.",
+        ),
+      enabled: z
+        .boolean()
+        .describe(
+          "Target state: true to enable the account, false to disable it. Required.",
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -175,9 +245,20 @@ function sendActionEmailTool(deps: UserToolDeps): ToolDefinition {
     name: "keycloak_user_send_action_email",
     title: "Send action email",
     description:
-      "Send a required-actions email (e.g. VERIFY_EMAIL, UPDATE_PASSWORD).",
+      "Write operation that emails the user a link prompting them to complete one or more required actions (such as verifying their email or updating their password), and returns a confirmation message. The user must have a valid email address configured. Not idempotent: each call sends a fresh email. Use this for self-service flows; to set a password directly without involving the user, use keycloak_user_reset_password instead.",
     level: ToolLevel.Write,
-    inputSchema: { id: z.string(), actions: z.array(z.string()) },
+    inputSchema: {
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) of the recipient. Required; obtain it from keycloak_user_search.",
+        ),
+      actions: z
+        .array(z.string())
+        .describe(
+          'Required-action codes to include in the email, e.g. ["VERIFY_EMAIL", "UPDATE_PASSWORD"]. Required and must contain at least one valid Keycloak required-action key.',
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -201,13 +282,30 @@ function resetUserPasswordTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_reset_password",
     title: "Reset user password",
-    description: "Set a new password for a user. Requires confirmation.",
+    description:
+      'Destructive write that overwrites a user\'s password with the supplied value, returning "Password reset." on success or a "Not reset: <reason>" message if confirmation was declined. Requires explicit confirmation: pass confirm=true, otherwise the operation is blocked pending approval. Commonly used right after keycloak_user_create to give a new account credentials. Not idempotent in effect, since it invalidates the previous password.',
     level: ToolLevel.Destructive,
     inputSchema: {
-      id: z.string(),
-      password: z.string(),
-      temporary: z.boolean().optional(),
-      confirm: z.boolean().optional(),
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) whose password will be set. Required; obtain it from keycloak_user_search.",
+        ),
+      password: z
+        .string()
+        .describe("The new plaintext password to set for the user. Required."),
+      temporary: z
+        .boolean()
+        .optional()
+        .describe(
+          "If true, the user must change this password at next login. Optional; defaults to false (permanent password).",
+        ),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Must be true to proceed; if omitted or false, the reset is blocked pending confirmation. Optional; defaults to false.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -237,9 +335,22 @@ function logoutUserTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_logout",
     title: "Log out user",
-    description: "Revoke all of a user's sessions. Requires confirmation.",
+    description:
+      'Destructive write that revokes all active sessions for a user, forcing them to re-authenticate, and returns "User logged out." on success or a "Not logged out: <reason>" message if confirmation was declined. Requires explicit confirmation: pass confirm=true, otherwise the operation is blocked pending approval. The account itself stays enabled; use keycloak_user_set_enabled to block future logins or keycloak_user_sessions_list to inspect sessions first. Effectively idempotent: once sessions are revoked, a repeat call has nothing left to revoke.',
     level: ToolLevel.Destructive,
-    inputSchema: { id: z.string(), confirm: z.boolean().optional() },
+    inputSchema: {
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) whose sessions will be revoked. Required; obtain it from keycloak_user_search.",
+        ),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Must be true to proceed; if omitted or false, the logout is blocked pending confirmation. Optional; defaults to false.",
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: true,
@@ -265,13 +376,25 @@ function deleteUserTool(deps: UserToolDeps): ToolDefinition {
     name: "keycloak_user_delete",
     title: "Delete user",
     description:
-      "Permanently delete a user. Requires confirmation; the username must " +
-      "match the target id.",
+      'Destructive write that permanently removes a user from the realm, returning "User \\"<username>\\" deleted." on success or a "Not deleted: <reason>" message otherwise. As a wrong-target guard, the supplied username must match the user that the id resolves to, and confirm must be true; otherwise the deletion is blocked. Look up the id and username with keycloak_user_get or keycloak_user_search first. Not reversible; consider keycloak_user_set_enabled to disable instead of deleting.',
     level: ToolLevel.Destructive,
     inputSchema: {
-      id: z.string(),
-      username: z.string(),
-      confirm: z.boolean().optional(),
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) of the account to delete. Required; obtain it from keycloak_user_search.",
+        ),
+      username: z
+        .string()
+        .describe(
+          "The username of the same account, used as a safety check: it must match the user that id resolves to or the deletion is refused. Required.",
+        ),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Must be true to proceed; if omitted or false, the deletion is blocked pending confirmation. Optional; defaults to false.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -299,14 +422,39 @@ function updateUserTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_update",
     title: "Update user",
-    description: "Update a user's email, name or enabled flag.",
+    description:
+      "Write operation that updates an existing user's profile fields and returns a confirmation message. Only the fields you supply are changed; omitted fields are left untouched (no field is cleared by omission). Idempotent: applying the same values again leaves the user unchanged. Use keycloak_user_get first to read current values, and keycloak_user_reset_password for credentials rather than this tool.",
     level: ToolLevel.Write,
     inputSchema: {
-      id: z.string(),
-      email: z.string().optional(),
-      firstName: z.string().optional(),
-      lastName: z.string().optional(),
-      enabled: z.boolean().optional(),
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) of the account to update. Required; obtain it from keycloak_user_search.",
+        ),
+      email: z
+        .string()
+        .optional()
+        .describe(
+          'New email address (e.g. "jane@example.com"). Optional; omit to leave the email unchanged.',
+        ),
+      firstName: z
+        .string()
+        .optional()
+        .describe(
+          "New first (given) name. Optional; omit to leave it unchanged.",
+        ),
+      lastName: z
+        .string()
+        .optional()
+        .describe(
+          "New last (family) name. Optional; omit to leave it unchanged.",
+        ),
+      enabled: z
+        .boolean()
+        .optional()
+        .describe(
+          "New enabled state: true to allow login, false to block it. Optional; omit to leave it unchanged.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -345,9 +493,16 @@ function listUserSessionsTool(deps: UserToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_sessions_list",
     title: "List user sessions",
-    description: "List a user's active sessions.",
+    description:
+      "Read-only. Returns a JSON array of a user's currently active sessions (an empty array if none). Use it to inspect where a user is logged in before deciding whether to revoke access with keycloak_user_logout. Idempotent: it never changes any state and repeated calls reflect only sessions that are still active.",
     level: ToolLevel.Read,
-    inputSchema: { id: z.string() },
+    inputSchema: {
+      id: z
+        .string()
+        .describe(
+          "The Keycloak user id (UUID) whose active sessions to list. Required; obtain it from keycloak_user_search.",
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,

@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.mrz1880/mcp-keycloak-admin",
   "title": "Keycloak Admin",
-  "description": "Administer a Keycloak instance through its Admin REST API: users, roles, clients, groups, identity providers, federation and events. Safe by default (read-only mode, realm allow-list, confirmation for destructive actions).",
-  "version": "0.2.1",
+  "description": "Administer Keycloak via its Admin REST API: users, roles, clients, groups, IdP, events.",
+  "version": "0.2.2",
   "repository": {
     "url": "https://github.com/mrz1880/mcp-keycloak-admin",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-keycloak-admin",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "transport": {
         "type": "stdio"
       },

@@ -47,7 +47,8 @@ function listGroupsTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_list",
     title: "List groups",
-    description: "List the realm's top-level groups.",
+    description:
+      "Read-only. Lists the realm's top-level groups. Use this to discover group IDs and names before calling group write tools such as keycloak_group_member_add, keycloak_group_role_assign, or keycloak_group_delete. Idempotent and takes no parameters; returns a JSON array of objects, each with the group id, name, and path.",
     level: ToolLevel.Read,
     inputSchema: {},
     annotations: {
@@ -68,9 +69,16 @@ function createGroupTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_create",
     title: "Create group",
-    description: "Create a top-level group.",
+    description:
+      "Write operation. Creates a new top-level group in the realm with the given name. Not idempotent: calling it again with the same name creates or attempts another group rather than reusing one. Use keycloak_group_list afterward to obtain the new group's id. Returns a confirmation message containing the created group's name.",
     level: ToolLevel.Write,
-    inputSchema: { name: z.string() },
+    inputSchema: {
+      name: z
+        .string()
+        .describe(
+          'Name for the new top-level group, e.g. "engineering". Used verbatim as the group name; must be non-empty.',
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -89,9 +97,21 @@ function addGroupMemberTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_member_add",
     title: "Add group member",
-    description: "Add a user to a group.",
+    description:
+      "Write operation. Adds an existing user to an existing group by their IDs. Idempotent: adding a user already in the group leaves membership unchanged. Resolve the IDs first with keycloak_group_list and a user listing tool; to undo, use keycloak_group_member_remove. Returns a fixed confirmation message.",
     level: ToolLevel.Write,
-    inputSchema: { groupId: z.string(), userId: z.string() },
+    inputSchema: {
+      groupId: z
+        .string()
+        .describe(
+          'ID of the target group (the group\'s UUID as returned by keycloak_group_list), e.g. "7c2e...".',
+        ),
+      userId: z
+        .string()
+        .describe(
+          'ID of the user to add (the user\'s UUID), e.g. "a1b2...". The user must already exist.',
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -111,12 +131,24 @@ function removeGroupMemberTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_member_remove",
     title: "Remove group member",
-    description: "Remove a user from a group. Requires confirmation.",
+    description:
+      "Destructive write operation that requires confirmation. Removes a user from a group by their IDs. Not idempotent in effect since it gates on confirmation; resolve IDs with keycloak_group_list and keycloak_group_members_list first, and use keycloak_group_member_add to reverse it. Returns a message stating the user was removed, or, if confirmation was withheld, that it was not removed with the reason.",
     level: ToolLevel.Destructive,
     inputSchema: {
-      groupId: z.string(),
-      userId: z.string(),
-      confirm: z.boolean().optional(),
+      groupId: z
+        .string()
+        .describe(
+          "ID of the group to remove the member from (the group's UUID from keycloak_group_list).",
+        ),
+      userId: z
+        .string()
+        .describe("ID of the user (the user's UUID) to remove from the group."),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Set true to confirm and proceed with this destructive removal. When omitted or false, the operation is gated by interactive confirmation and may be declined.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -145,9 +177,22 @@ function deleteGroupTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_delete",
     title: "Delete group",
-    description: "Delete a group. Requires confirmation.",
+    description:
+      "Destructive write operation that requires confirmation. Permanently deletes a group by its ID, including its membership and role assignments. This cannot be undone; find the ID with keycloak_group_list first. Returns a message confirming deletion, or, if confirmation was withheld, that it was not deleted with the reason.",
     level: ToolLevel.Destructive,
-    inputSchema: { id: z.string(), confirm: z.boolean().optional() },
+    inputSchema: {
+      id: z
+        .string()
+        .describe(
+          "ID of the group to delete (the group's UUID as returned by keycloak_group_list).",
+        ),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe(
+          "Set true to confirm and proceed with this destructive deletion. When omitted or false, the operation is gated by interactive confirmation and may be declined.",
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: true,
@@ -172,9 +217,21 @@ function assignGroupRoleTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_role_assign",
     title: "Assign a realm role to a group",
-    description: "Grant a realm role to a group (inherited by its members).",
+    description:
+      "Write operation. Grants an existing realm role to a group, so the group's members inherit that role. Idempotent: re-assigning an already-granted role makes no further change. Resolve the group ID with keycloak_group_list and ensure the realm role exists beforehand. Returns a message stating the role was assigned, or, if it could not be, that it was not assigned with the reason.",
     level: ToolLevel.Write,
-    inputSchema: { groupId: z.string(), role: z.string() },
+    inputSchema: {
+      groupId: z
+        .string()
+        .describe(
+          "ID of the group to grant the role to (the group's UUID from keycloak_group_list).",
+        ),
+      role: z
+        .string()
+        .describe(
+          'Name of an existing realm role to assign, e.g. "admin". Must match an existing realm role name exactly.',
+        ),
+    },
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -201,9 +258,16 @@ function listGroupMembersTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_group_members_list",
     title: "List group members",
-    description: "List the users that are members of a group.",
+    description:
+      "Read-only and idempotent. Lists the users that are direct members of the given group. Resolve the group ID first with keycloak_group_list. Returns a JSON array of user objects, each with id, username, email (or null), and enabled status.",
     level: ToolLevel.Read,
-    inputSchema: { groupId: z.string() },
+    inputSchema: {
+      groupId: z
+        .string()
+        .describe(
+          "ID of the group whose members to list (the group's UUID from keycloak_group_list).",
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -222,9 +286,16 @@ function listUserGroupsTool(deps: GroupToolDeps): ToolDefinition {
   return {
     name: "keycloak_user_groups_list",
     title: "List a user's groups",
-    description: "List the groups a user belongs to.",
+    description:
+      "Read-only and idempotent. Lists the groups the given user belongs to. Resolve the user ID first with a user listing tool. Returns a JSON array of group objects, each with id, name, and path.",
     level: ToolLevel.Read,
-    inputSchema: { userId: z.string() },
+    inputSchema: {
+      userId: z
+        .string()
+        .describe(
+          "ID of the user whose group memberships to list (the user's UUID).",
+        ),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,

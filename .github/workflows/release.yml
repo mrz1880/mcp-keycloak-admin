@@ -12,7 +12,8 @@ on:
 # generated automatically.
 permissions:
   id-token: write
-  contents: read
+  # write is needed for the final step to create the GitHub Release.
+  contents: write
 
 jobs:
   publish:
@@ -34,3 +35,24 @@ jobs:
       # npm performs the OIDC trusted-publishing exchange instead.
       - run: npm config delete '//registry.npmjs.org/:_authToken' --location user
       - run: npm publish --provenance --access public
+      # Publish a GitHub Release for this tag, using the matching CHANGELOG
+      # section as the notes. Runs only after a successful npm publish.
+      - name: Create GitHub Release from CHANGELOG
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          awk -v ver="$version" '
+            $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
+            flag && /^## \[/ { exit }
+            flag { print }
+          ' CHANGELOG.md | sed '/./,$!d' > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "Release $TAG" > release-notes.md
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TAG" --notes-file release-notes.md
+          else
+            gh release create "$TAG" --title "$TAG" --notes-file release-notes.md --verify-tag
+          fi

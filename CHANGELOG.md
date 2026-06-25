@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+
+- Force the transitive `esbuild` dev dependency to `>= 0.28.1` (npm `overrides`)
+  to clear GHSA-g7r4-m6w7-qqqr. Build-time only — `esbuild` is not part of the
+  published package, so the npm artifact is unchanged.
+
 ## [0.2.2] - 2026-06-24
 
 ### Documentation & tooling

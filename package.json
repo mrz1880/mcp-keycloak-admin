@@ -60,6 +60,9 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.4.3"
   },
+  "overrides": {
+    "esbuild": "^0.28.1"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",

@@ -3,7 +3,7 @@
   "name": "io.github.mrz1880/mcp-keycloak-admin",
   "title": "Keycloak Admin",
   "description": "Administer Keycloak via its Admin REST API: users, roles, clients, groups, IdP, events.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "repository": {
     "url": "https://github.com/mrz1880/mcp-keycloak-admin",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-keycloak-admin",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "transport": {
         "type": "stdio"
       },

@@ -71,6 +71,7 @@ describe("KeycloakClientRepository", () => {
       enabled: true,
       publicClient: false,
       redirectUris: ["https://app/*"],
+      webOrigins: [],
     });
     expect(fetch.requests[0]?.method).toBe("POST");
     expect(fetch.requests[0]?.url).toBe(
@@ -79,12 +80,37 @@ describe("KeycloakClientRepository", () => {
     expect(fetch.requests[0]?.body).toContain('"clientId":"new-client"');
   });
 
+  it("creates a client including its web origins in the body", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 201 })]);
+    await repo.create({
+      clientId: ClientId.fromString("new-client"),
+      enabled: true,
+      publicClient: false,
+      redirectUris: ["https://app/*"],
+      webOrigins: ["https://app.example.com"],
+    });
+    expect(fetch.requests[0]?.body).toContain(
+      '"webOrigins":["https://app.example.com"]',
+    );
+  });
+
   it("updates a client with a PUT of only the changed fields", async () => {
     const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
     await repo.update(ClientUuid.fromString(UUID), { enabled: false });
     expect(fetch.requests[0]?.method).toBe("PUT");
     expect(fetch.requests[0]?.url).toContain(`/clients/${UUID}`);
     expect(fetch.requests[0]?.body).toBe('{"enabled":false}');
+  });
+
+  it("updates a client's web origins with a PUT", async () => {
+    const { repo, fetch } = makeRepo([new Response(null, { status: 204 })]);
+    await repo.update(ClientUuid.fromString(UUID), {
+      webOrigins: ["https://a.example.com"],
+    });
+    expect(fetch.requests[0]?.method).toBe("PUT");
+    expect(fetch.requests[0]?.body).toBe(
+      '{"webOrigins":["https://a.example.com"]}',
+    );
   });
 
   it("deletes a client with a DELETE", async () => {

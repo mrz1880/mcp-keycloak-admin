@@ -20,6 +20,7 @@ describe("client CRUD use cases", () => {
       enabled: true,
       publicClient: false,
       redirectUris: ["https://app/*"],
+      webOrigins: [],
     });
     expect(repo.created[0]?.clientId.toString()).toBe("new-client");
   });

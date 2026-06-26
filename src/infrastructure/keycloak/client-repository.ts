@@ -65,6 +65,7 @@ export class KeycloakClientRepository implements ClientRepository {
       enabled: client.enabled,
       publicClient: client.publicClient,
       redirectUris: client.redirectUris,
+      webOrigins: client.webOrigins,
     });
   }
 
@@ -78,6 +79,9 @@ export class KeycloakClientRepository implements ClientRepository {
     }
     if (changes.redirectUris !== undefined) {
       body.redirectUris = changes.redirectUris;
+    }
+    if (changes.webOrigins !== undefined) {
+      body.webOrigins = changes.webOrigins;
     }
     return this.client.put(`/clients/${uuid.toString()}`, body);
   }

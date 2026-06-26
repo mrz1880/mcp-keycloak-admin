@@ -44,11 +44,12 @@ Create a realm client.
 | `enabled`      | boolean  | no       | Defaults to `true`.           |
 | `publicClient` | boolean  | no       | `true` for a public client.   |
 | `redirectUris` | string[] | no       | Allowed redirect URIs.        |
+| `webOrigins`   | string[] | no       | Allowed CORS web origins.     |
 
 ## `keycloak_client_update` [W]
 
-Update a client's `enabled`, `publicClient` or `redirectUris` (only the supplied
-fields change).
+Update a client's `enabled`, `publicClient`, `redirectUris` or `webOrigins`
+(only the supplied fields change).
 
 | Parameter      | Type     | Required | Description      |
 | -------------- | -------- | -------- | ---------------- |
@@ -56,6 +57,7 @@ fields change).
 | `enabled`      | boolean  | no       |                  |
 | `publicClient` | boolean  | no       |                  |
 | `redirectUris` | string[] | no       |                  |
+| `webOrigins`   | string[] | no       |                  |
 
 ## `keycloak_client_delete` [D]
 

@@ -6,6 +6,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `keycloak_client_create` and `keycloak_client_update` now accept `webOrigins`
+  (allowed CORS web origins), alongside the existing `redirectUris`.
+
 ### Security
 
 - Force the transitive `esbuild` dev dependency to `>= 0.28.1` (npm `overrides`)

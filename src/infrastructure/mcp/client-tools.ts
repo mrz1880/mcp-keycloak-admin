@@ -238,6 +238,15 @@ function createClientTool(deps: ClientToolDeps): ToolDefinition {
             '["https://app.example.com/callback"]). Optional; defaults to an empty ' +
             "list when omitted.",
         ),
+      webOrigins: z
+        .array(z.string())
+        .optional()
+        .describe(
+          "Allowed CORS web origins as a list of strings (e.g. " +
+            '["https://app.example.com"]). Use "+" to allow all registered redirect ' +
+            'URI origins, or "*" to allow any. Optional; defaults to an empty list ' +
+            "when omitted.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -250,6 +259,7 @@ function createClientTool(deps: ClientToolDeps): ToolDefinition {
         enabled: args.enabled !== false,
         publicClient: args.publicClient === true,
         redirectUris: readStringArray(args.redirectUris),
+        webOrigins: readStringArray(args.webOrigins),
       });
       return textResult(`Client "${String(args.clientId)}" created.`);
     },
@@ -261,7 +271,8 @@ function updateClientTool(deps: ClientToolDeps): ToolDefinition {
     name: "keycloak_client_update",
     title: "Update client",
     description:
-      "Update an existing client's enabled flag, public flag, and/or redirect URIs. " +
+      "Update an existing client's enabled flag, public flag, redirect URIs and/or " +
+      "web origins. " +
       "Only the fields you supply are changed; omitted fields are left untouched. " +
       "This is a write operation and is idempotent: applying the same values again " +
       "yields the same state. Use keycloak_client_list or keycloak_client_get to find " +
@@ -298,6 +309,15 @@ function updateClientTool(deps: ClientToolDeps): ToolDefinition {
             "list. Omit to leave the current URIs unchanged; pass an empty array to " +
             "clear them.",
         ),
+      webOrigins: z
+        .array(z.string())
+        .optional()
+        .describe(
+          "New full list of allowed CORS web origins, replacing the existing list " +
+            '(e.g. ["https://app.example.com"]; "+" allows all registered redirect ' +
+            'URI origins, "*" allows any). Omit to leave the current origins ' +
+            "unchanged; pass an empty array to clear them.",
+        ),
     },
     annotations: {
       readOnlyHint: false,
@@ -309,6 +329,7 @@ function updateClientTool(deps: ClientToolDeps): ToolDefinition {
         enabled?: boolean;
         publicClient?: boolean;
         redirectUris?: string[];
+        webOrigins?: string[];
       } = {};
       if (typeof args.enabled === "boolean") {
         changes.enabled = args.enabled;
@@ -318,6 +339,9 @@ function updateClientTool(deps: ClientToolDeps): ToolDefinition {
       }
       if (Array.isArray(args.redirectUris)) {
         changes.redirectUris = readStringArray(args.redirectUris);
+      }
+      if (Array.isArray(args.webOrigins)) {
+        changes.webOrigins = readStringArray(args.webOrigins);
       }
       const result = await new UpdateClientUseCase(
         deps.clientRepository,

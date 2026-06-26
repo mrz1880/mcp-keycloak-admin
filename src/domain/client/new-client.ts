@@ -5,10 +5,12 @@ export interface NewClient {
   readonly enabled: boolean;
   readonly publicClient: boolean;
   readonly redirectUris: string[];
+  readonly webOrigins: string[];
 }
 
 export interface ClientUpdate {
   readonly enabled?: boolean;
   readonly publicClient?: boolean;
   readonly redirectUris?: string[];
+  readonly webOrigins?: string[];
 }

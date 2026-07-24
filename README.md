@@ -92,11 +92,11 @@ isolated, with its own credentials and guardrails:
       "args": ["-y", "mcp-keycloak-admin"],
       "env": {
         "KEYCLOAK_BASE_URL": "https://preprod.example.com",
-        "KEYCLOAK_REALM": "Pandi-Panda-Preprod",
+        "KEYCLOAK_REALM": "preprod-realm",
         "AUTH_MODE": "service_account",
         "KC_CLIENT_ID": "mcp-admin",
         "KC_CLIENT_SECRET": "…",
-        "ALLOWED_REALMS": "Pandi-Panda-Preprod"
+        "ALLOWED_REALMS": "preprod-realm"
       }
     },
     "kc-prod": {
@@ -104,12 +104,12 @@ isolated, with its own credentials and guardrails:
       "args": ["-y", "mcp-keycloak-admin"],
       "env": {
         "KEYCLOAK_BASE_URL": "https://auth.example.com",
-        "KEYCLOAK_REALM": "Pandi-Panda",
+        "KEYCLOAK_REALM": "prod-realm",
         "AUTH_MODE": "service_account",
         "KC_CLIENT_ID": "mcp-admin",
         "KC_CLIENT_SECRET": "…",
         "READ_ONLY": "true",
-        "ALLOWED_REALMS": "Pandi-Panda"
+        "ALLOWED_REALMS": "prod-realm"
       }
     }
   }

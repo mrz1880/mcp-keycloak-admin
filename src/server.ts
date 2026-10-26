@@ -108,7 +108,7 @@ export function createServer(config: AppConfig): McpServer {
       ...buildGroupTools({ groupRepository, roleRepository, confirmers }),
       ...buildIdpTools({ identityProviderRepository, confirmers }),
       ...buildFederationTools({ federationRepository }),
-      ...buildAuthTools({ authenticationRepository }),
+      ...buildAuthTools({ authenticationRepository, confirmers }),
       ...buildAuthzTools({ clientRepository, authorizationRepository }),
       ...buildEventRealmTools({ eventLog, realmInfo }),
     ],

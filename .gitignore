@@ -1,5 +1,6 @@
 # Internal working documents — never committed
 docs/plans/
+STATUS.md
 
 # Dependencies & build output
 node_modules/

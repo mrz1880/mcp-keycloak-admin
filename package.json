@@ -68,7 +68,7 @@
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.0.0",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-boundaries": "^7.1.0",
@@ -77,9 +77,9 @@
     "lint-staged": "^17.0.8",
     "prettier": "^3.8.4",
     "testcontainers": "^12.0.3",
-    "tsup": "^8.5.1",
-    "typescript": "^6.0.3",
+    "tsup": "^9.0.0",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.62.0",
-    "vitest": "^4.1.9"
+    "vitest": "^5.0.5"
   }
 }
